@@ -74,21 +74,132 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	// Initialization of controller and hardware configuration
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
-
-
+	
+	// Drive Configuration (using PROS + LemLib settings)
+	// Left Motors: Ports -5, 6, -7; Right Motors: Ports 1, -3, 4; IMU Sensor: Port 19
+	const double WHEEL_DIAMETER = 3.25;
+	const double MOTOR_RPM = 600;
+	const double GEAR_RATIO = 1.3333;
+	pros::MotorGroup left_drive({-5, 6, -7});
+	pros::MotorGroup right_drive({1, -3, 4});
+	pros::IMU drive_imu(19);
+	
+	// Intake System:
+	// Primary Intake Motor: Port 18 (600 RPM, reversed), Secondary Intake Motor: Port 9 (600 RPM, not reversed)
+	pros::Motor intake_primary(18, pros::E_MOTOR_GEARSET_06, true);
+	pros::Motor intake_secondary(9, pros::E_MOTOR_GEARSET_06, false);
+	
+	// Lift System:
+	// Lift Motor (assumed port 10), Rotation Sensor on Port 8, Optical Sensor on Port 12
+	pros::Motor lift_motor(10, pros::E_MOTOR_GEARSET_06, false); // port assumed since not specified
+	pros::Rotation lift_rotation(8);
+	pros::Optical lift_optical(12);
+	
+	// Pneumatics (ADI Ports):
+	// Mogo Lift on 'H', Elevator on 'F', Doinker (Deploy Mechanism) on 'G'
+	pros::ADIDigitalOut mogo_lift('H');
+	pros::ADIDigitalOut elevator('F');
+	pros::ADIDigitalOut doinker('G');
+	
+	// Timer for endgame reminder (assuming a 120-second match, last 15 seconds trigger a rumble)
+	uint32_t start_time = pros::millis();
+	bool endgame_rumbled = false;
+	
+	// Intake state enumeration for toggling the intake system
+	enum IntakeState { OFF, FORWARD, REVERSE };
+	IntakeState currentIntakeState = OFF;
+	
+	// Lift PID variables for auto lift control
+	bool auto_lift = false;
+	double target_angle = 0.0;
+	double previous_error = 0.0;
+	const double kP = 0.05;
+	const double kD = 0.5;
+	const double dt = 0.02; // loop delay in seconds (20 ms)
+	const double lift_threshold = 2.0; // tolerance in degrees for stopping PID
+	
 	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
-
-		// Arcade control scheme
-		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
-		int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
-		left_mg.move(dir - turn);                      // Sets left motor voltage
-		right_mg.move(dir + turn);                     // Sets right motor voltage
-		pros::delay(20);                               // Run for 20 ms then update
+		// Drive control: Arcade drive using left joystick for forward/backward and right joystick for turning.
+		int dir = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+		left_drive.move(dir - turn);
+		right_drive.move(dir + turn);
+		
+		// Intake control:
+		// L1 toggles intake forward; L2 toggles intake reverse (with room for color detection logic).
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+			currentIntakeState = (currentIntakeState != FORWARD) ? FORWARD : OFF;
+		}
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+			currentIntakeState = (currentIntakeState != REVERSE) ? REVERSE : OFF;
+		}
+		switch (currentIntakeState) {
+			case FORWARD:
+				intake_primary.move(127);
+				intake_secondary.move(127);
+				break;
+			case REVERSE:
+				intake_primary.move(-127);
+				intake_secondary.move(-127);
+				break;
+			default:
+				intake_primary.move(0);
+				intake_secondary.move(0);
+				break;
+		}
+		
+		// Lift control:
+		// R1 initiates auto lift control (move to First Ring Lift preset at 35°) using a simple PID.
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
+			auto_lift = true;
+			target_angle = 35.0;  // First Ring Lift position in degrees
+			previous_error = 0.0;
+		}
+		// R2 enables manual lift reverse (lowering the lift), overriding auto mode.
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+			auto_lift = false;
+			lift_motor.move(-127);
+		} else if (auto_lift) {
+			double current_angle = lift_rotation.get_angle();
+			double error = target_angle - current_angle;
+			double derivative = (error - previous_error) / dt;
+			double motor_val = kP * error + kD * derivative;
+			// Clamp motor output to allowed range.
+			if (motor_val > 127)
+				motor_val = 127;
+			if (motor_val < -127)
+				motor_val = -127;
+			lift_motor.move(motor_val);
+			previous_error = error;
+			if (fabs(error) < lift_threshold) {
+				auto_lift = false;
+				lift_motor.move(0);
+			}
+		} else if (!master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+			lift_motor.move(0);
+		}
+		
+		// Pneumatics control:
+		// X toggles the Doinker mechanism; B toggles the Mogo Lift mechanism.
+		static bool doinker_state = false;
+		static bool mogo_lift_state = false;
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+			doinker_state = !doinker_state;
+			doinker.set_value(doinker_state);
+		}
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+			mogo_lift_state = !mogo_lift_state;
+			mogo_lift.set_value(mogo_lift_state);
+		}
+		
+		// Endgame reminder: Rumble the controller in the last 15 seconds of the match.
+		if (!endgame_rumbled && (pros::millis() - start_time >= 105000)) {
+			master.rumble(".....");
+			endgame_rumbled = true;
+		}
+		
+		pros::delay(20);
 	}
 }
