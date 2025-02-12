@@ -79,8 +79,8 @@ void opcontrol() {
 	pros::MotorGroup right_mg({-1, 3, -4});   // Right motors: reversed port 1, forward port 3, reversed port 4
 
 	// New constants for exponential drive with rescaled deadband and cubic mix
-	const double EXPO_PARAMETER = 0.3;  // 0 => fully linear, 1 => fully cubic (set lower for more linear response)
-	const int DEADBAND = 3;             // Reduced deadband improves sensitivity for small joystick movements
+	const double EXPO_PARAMETER = 0.5;  // 0 => fully linear, 1 => fully cubic (increased for more expo effect)
+	const int DEADBAND = 2;             // Further reduced deadband for finer control at very low inputs
 
     // Lambda to apply expo drive (with deadband compensation and remapping)
     auto applyExpo = [=](int input) -> int {
