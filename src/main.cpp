@@ -76,33 +76,38 @@ void autonomous() {}
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::MotorGroup left_mg({5, -6, 7});    // Left motors: forward port 5, reversed port 6, forward port 7
-	pros::MotorGroup right_mg({-1, 3, -4});    // Right motors: reversed port 1, forward port 3, reversed port 4
+	pros::MotorGroup right_mg({-1, 3, -4});   // Right motors: reversed port 1, forward port 3, reversed port 4
 
-	// Constants for exponential drive
-	const double EXPO_FACTOR = 2.3;  // Adjust this value to change the curve (higher = more aggressive curve)
-	const int DEADBAND = 5;          // Minimum joystick value to respond to
+	// New constants for exponential drive with rescaled deadband and cubic mix
+	const double EXPO_PARAMETER = 0.3;  // 0 => fully linear, 1 => fully cubic (set lower for more linear response)
+	const int DEADBAND = 3;             // Reduced deadband improves sensitivity for small joystick movements
+
+    // Lambda to apply expo drive (with deadband compensation and remapping)
+    auto applyExpo = [=](int input) -> int {
+        if (abs(input) < DEADBAND)
+            return 0;
+        double sign = (input >= 0) ? 1.0 : -1.0;
+        // Remap input so that after deadband, full range [0, 1] is used
+        double normalized = (double)(abs(input) - DEADBAND) / (127 - DEADBAND);
+        // Apply a mix of linear and cubic response for exponential drive
+        double expo_val = (1 - EXPO_PARAMETER) * normalized + EXPO_PARAMETER * normalized * normalized * normalized;
+        return static_cast<int>(expo_val * 127 * sign);
+    };
 
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
 
-		// Get joystick values
+		// Get raw joystick values
 		int forward = master.get_analog(ANALOG_LEFT_Y);
 		int turn = master.get_analog(ANALOG_RIGHT_X);
 
-		// Apply deadband
-		forward = (abs(forward) < DEADBAND) ? 0 : forward;
-		turn = (abs(turn) < DEADBAND) ? 0 : turn;
+		// Process values through the expo function
+		int forward_expo = applyExpo(forward);
+		int turn_expo = applyExpo(turn);
 
-		// Apply exponential curve while maintaining sign
-		double forward_expo = (forward / 127.0);  // Normalize to [-1, 1]
-		forward_expo = pow(abs(forward_expo), EXPO_FACTOR) * 127.0 * (forward > 0 ? 1 : -1);
-
-		double turn_expo = (turn / 127.0);  // Normalize to [-1, 1]
-		turn_expo = pow(abs(turn_expo), EXPO_FACTOR) * 127.0 * (turn > 0 ? 1 : -1);
-
-		// Calculate motor values
+		// Calculate motor powers
 		int left_power = forward_expo - turn_expo;
 		int right_power = forward_expo + turn_expo;
 
@@ -110,6 +115,6 @@ void opcontrol() {
 		left_mg.move(left_power);
 		right_mg.move(right_power);
 
-		pros::delay(20);                               // Run for 20 ms then update
+		pros::delay(20); // Run for 20 ms then update
 	}
 }
