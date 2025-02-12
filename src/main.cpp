@@ -1,6 +1,6 @@
 #include "main.h"
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
-#include "gearbox.hpp"    // Include the declaration for Controll_Gears
+#include "../include/gearbox.hpp"    // Include the declaration for Controll_Gears
 
 /**
  * A callback function for LLEMU's center button.
