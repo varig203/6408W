@@ -1,5 +1,5 @@
 #include "main.h"
-#include "pnuematic.hpp"  // Include the declaration for clamp_fn
+#include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
 
 /**
  * A callback function for LLEMU's center button.
@@ -95,10 +95,18 @@ void opcontrol() {
         return static_cast<int>(expo_val * 127 * sign);
     };
 
-    // Variable to track previous state of the B button
+    // Variables to track previous states of the A and B buttons
+    bool a_button_prev = false;
     bool b_button_prev = false;
 
 	while (true) {
+		// Check if the A button was just pressed (edge detection)
+		bool a_button_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+		if (a_button_curr && !a_button_prev) {
+			doinker();  // Toggle the G port by calling the doinker function
+		}
+		a_button_prev = a_button_curr;
+
 		// Check if the B button was just pressed (edge detection)
 		bool b_button_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_B);
 		if (b_button_curr && !b_button_prev) {
