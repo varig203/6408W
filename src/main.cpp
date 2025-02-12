@@ -78,16 +78,38 @@ void opcontrol() {
 	pros::MotorGroup left_mg({5, -6, 7});    // Left motors: forward port 5, reversed port 6, forward port 7
 	pros::MotorGroup right_mg({-1, 3, -4});    // Right motors: reversed port 1, forward port 3, reversed port 4
 
+	// Constants for exponential drive
+	const double EXPO_FACTOR = 2.3;  // Adjust this value to change the curve (higher = more aggressive curve)
+	const int DEADBAND = 5;          // Minimum joystick value to respond to
+
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
 
-		// Arcade control scheme
-		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
-		int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
-		left_mg.move(dir - turn);                      // Sets left motor voltage
-		right_mg.move(dir + turn);                     // Sets right motor voltage
+		// Get joystick values
+		int forward = master.get_analog(ANALOG_LEFT_Y);
+		int turn = master.get_analog(ANALOG_RIGHT_X);
+
+		// Apply deadband
+		forward = (abs(forward) < DEADBAND) ? 0 : forward;
+		turn = (abs(turn) < DEADBAND) ? 0 : turn;
+
+		// Apply exponential curve while maintaining sign
+		double forward_expo = (forward / 127.0);  // Normalize to [-1, 1]
+		forward_expo = pow(abs(forward_expo), EXPO_FACTOR) * 127.0 * (forward > 0 ? 1 : -1);
+
+		double turn_expo = (turn / 127.0);  // Normalize to [-1, 1]
+		turn_expo = pow(abs(turn_expo), EXPO_FACTOR) * 127.0 * (turn > 0 ? 1 : -1);
+
+		// Calculate motor values
+		int left_power = forward_expo - turn_expo;
+		int right_power = forward_expo + turn_expo;
+
+		// Apply motor power
+		left_mg.move(left_power);
+		right_mg.move(right_power);
+
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 }
