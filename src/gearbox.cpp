@@ -72,8 +72,12 @@ void Kill_Arm() {
 
 // main controll loop to run in main
 void Controll_Gears() {
-    if (pros::Controller(pros::E_CONTROLLER_MASTER).get_digital(pros::E_CONTROLLER_DIGITAL_R2)){ // R2 intakes and auto switches between 1 and 2 motor
+    if (pros::Controller(pros::E_CONTROLLER_MASTER).get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { // R2 intakes only while pressed
         Intake();
+    } else {
+        // Stop intake motors when R2 is released
+        TopMotor.move(0);
+        BottomMotor.move(0);
     }
 
     if (pros::Controller(pros::E_CONTROLLER_MASTER).get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // toggle the load position and unlock it with the same button
