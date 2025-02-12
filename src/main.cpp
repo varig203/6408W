@@ -1,5 +1,6 @@
 #include "main.h"
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
+#include "gearbox.hpp"    // Include the declaration for Controll_Gears
 
 /**
  * A callback function for LLEMU's center button.
@@ -133,6 +134,9 @@ void opcontrol() {
 		// Apply motor power
 		left_mg.move(left_power);
 		right_mg.move(right_power);
+
+		// Run gearbox control
+		Controll_Gears();
 
 		pros::delay(20); // Run for 20 ms then update
 	}

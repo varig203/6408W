@@ -1,11 +1,13 @@
 #include "main.h"
+#include "gearbox.hpp"
+#include "lemlib/api.hpp"
 
-pros::Motor TopMotor(9);
-pros::Motor BottomMotor(18);
+// Define the motors that were declared as extern in the header
+pros::Motor TopMotor(9, pros::E_MOTOR_GEARSET_36); // Using red cartridge (100 RPM) for better torque
+pros::Motor BottomMotor(18, pros::E_MOTOR_GEARSET_36); // Using red cartridge (100 RPM) for better torque
 pros::Rotation Arm_Sensor(8);
-pros::Controller master((pros::E_CONTROLLER_MASTER));
 
-// PID Constants
+// PID Constants - adjusted for lemlib compatibility
 const double kP = 0.5;  // Proportional gain (adjust as needed)
 const double kI = 0.0;  // Integral gain (set to 0 for now)
 const double kD = 0.1;  // Derivative gain (helps reduce overshoot)
@@ -18,7 +20,7 @@ static double motorPower = 0;
 const double Arm_Target = 1000; // adjust later for the proper loading angle
 bool hold_arm = false; //keep track of if we hold the arm or not
 
-void StopAll() { // stop all motion and dissable the arm pid
+void StopAll() { // stop all motion and disable the arm pid
     TopMotor.move(0);
     BottomMotor.move(0);
     hold_arm = false; 
@@ -52,11 +54,13 @@ void Load_Arm_PID() {
 
         motorPower = (kP * error) + (kI * integral) + (kD * derivative); 
 
+        // Clamp motor power to valid range
+        if (motorPower > 127) motorPower = 127;
+        if (motorPower < -127) motorPower = -127;
+
         TopMotor.move(motorPower); // Move motor based on PID output
 
         previousError = error;
-
-        pros::delay(20); // Prevent CPU overload
     }
     else {
         TopMotor.move(0);
@@ -70,21 +74,40 @@ void Kill_Arm() {
     integral = 0;
 }
 
-// main controll loop to run in main
+// main control loop to run in main
 void Controll_Gears() {
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){ // R2 intakes and auto switches between 1 and 2 motor
+    static pros::Controller master(pros::E_CONTROLLER_MASTER);
+    static bool r1_prev = false;
+    
+    // Get current button states
+    bool r1_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+    bool r2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+    bool l2 = master.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+
+    // R2: Intake
+    if (r2) {
         Intake();
     }
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // toggle the load position and unlock it with the same button
-        if (hold_arm) {
+    // R1: Toggle PID and load position (on button release)
+    if (r1_curr && !r1_prev) {
+        hold_arm = !hold_arm;
+        if (!hold_arm) {
             Kill_Arm();
-        } else {
-            Load_Arm_PID();
         }
     }
+    if (hold_arm) {
+        Load_Arm_PID();
+    }
+    r1_prev = r1_curr;
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) { // L2 outtakes and raises the arm
+    // L2: Outtake and raise arm
+    if (l2) {
         MarryUp_and_FullOut();
     }
-}
+
+    // If no buttons pressed and not holding arm position, stop motors
+    if (!r2 && !l2 && !hold_arm) {
+        StopAll();
+    }
+} 
