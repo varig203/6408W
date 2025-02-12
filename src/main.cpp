@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pnuematic.hpp"  // Include the declaration for clamp_fn
 
 /**
  * A callback function for LLEMU's center button.
@@ -94,7 +95,17 @@ void opcontrol() {
         return static_cast<int>(expo_val * 127 * sign);
     };
 
+    // Variable to track previous state of the B button
+    bool b_button_prev = false;
+
 	while (true) {
+		// Check if the B button was just pressed (edge detection)
+		bool b_button_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+		if (b_button_curr && !b_button_prev) {
+			clamp_fn();  // Toggle the H port by calling the clamp function
+		}
+		b_button_prev = b_button_curr;
+
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
