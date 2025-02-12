@@ -3,6 +3,7 @@
 pros::Motor TopMotor(9);
 pros::Motor BottomMotor(18);
 pros::Rotation Arm_Sensor(8);
+pros::Controller master((pros::E_CONTROLLER_MASTER));
 
 // PID Constants
 const double kP = 0.5;  // Proportional gain (adjust as needed)
@@ -22,6 +23,7 @@ void StopAll() { // stop all motion and dissable the arm pid
     TopMotor.move(0);
     BottomMotor.move(0);
     hold_arm = false; 
+    pros::delay(20); // proper motor sync
 }
 
 void Intake() {
@@ -56,14 +58,33 @@ void Load_Arm_PID() {
 
         pros::delay(20); // Prevent CPU overload
     }
-}
-
-void Load_Arm() {
-    static double error = 0, previousError = 0;
-    static double integral = 0, derivative = 0;
-    static double motorPower = 0;
-    while (hold_arm){
-        pros::Task Load_ring(Load_Arm_PID);
+    else {
+        TopMotor.move(0);
+        integral = 0;
     }
 }
 
+// stop holding position
+void Kill_Arm() {
+    hold_arm = false;
+    integral = 0;
+}
+
+// main controll loop to run in main
+void Controll_Gears() {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){ // R2 intakes and auto switches between 1 and 2 motor
+        Intake();
+    }
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // toggle the load position and unlock it with the same button
+        if (hold_arm) {
+            Kill_Arm();
+        } else {
+            Load_Arm_PID();
+        }
+    }
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) { // L2 outtakes and raises the arm
+        MarryUp_and_FullOut();
+    }
+}
