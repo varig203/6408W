@@ -10,14 +10,13 @@ const double kP = 0.5;  // Proportional gain (adjust as needed)
 const double kI = 0.0;  // Integral gain (set to 0 for now)
 const double kD = 0.1;  // Derivative gain (helps reduce overshoot)
 
+// setup PID variables
 static double error = 0, previousError = 0;
 static double integral = 0, derivative = 0;
 static double motorPower = 0;
 
-const double Arm_Target = 1000; // tune the height of the arm to load rings into the marry brown 
-
+const double Arm_Target = 1000; // adjust later for the proper loading angle
 bool hold_arm = false; //keep track of if we hold the arm or not
-
 
 void StopAll() { // stop all motion and dissable the arm pid
     TopMotor.move(0);
@@ -26,7 +25,8 @@ void StopAll() { // stop all motion and dissable the arm pid
     pros::delay(20); // proper motor sync
 }
 
-void Intake() {
+// make this function not interfere with the arm hold when loading rings
+void Intake() { 
     if (hold_arm){ // move with 1 motor if the arm is being held
         BottomMotor.move(-127);
     }
