@@ -29,6 +29,7 @@ void initialize() {
 	pros::lcd::set_text(1, "Hello PROS User!");
 
 	pros::lcd::register_btn1_cb(on_center_button);
+	initialize_gearbox();  // Add this line
 }
 
 /**
@@ -136,7 +137,7 @@ void opcontrol() {
 		right_mg.move(right_power);
 
 		// Run gearbox control
-		Controll_Gears();
+		GearBox_Control();
 
 		pros::delay(20); // Run for 20 ms then update
 	}

@@ -4,6 +4,8 @@
 // Declaration for gearbox control functions
 
 // Runs the gearbox control loop that handles the intake, PID arm load, and outtake functions.
-void Controll_Gears();
+void GearBox_Control();
+
+void initialize_gearbox();
 
 #endif // GEARBOX_HPP 

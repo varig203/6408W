@@ -1,117 +1,119 @@
-#include "../include/gearbox.hpp"
 #include "main.h"
+#include <string>  // For std::string
+#include "gearbox.hpp"  // For function declarations
+#include <cmath>   // For abs() and other math functions
+#include "pros/adi.hpp"
+
 
 pros::Motor TopMotor(9);
 pros::Motor BottomMotor(18);
 pros::Rotation Arm_Sensor(8);
+pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-// PID Constants
-const double kP = 7;  // Proportional gain (adjust as needed)
-const double kI = 0.4;  // Integral gain (set to 0 for now)
-const double kD = 0.1;  // Derivative gain (helps reduce overshoot)
+const double Arm_Target = 313;
+const double acceptable_angle_range = 1;
 
-// setup PID variables
-static double error = 0, previousError = 0;
-static double integral = 0, derivative = 0;
-static double motorPower = 0;
+const double kP = 0.5;  // Tune these values!
+const double kI = 0.1;
+const double kD = 0.2;
+double integral = 0;
+double previousError = 0;
 
-const double Arm_Target = 313; // target in degrees
-const double TICKS_PER_DEG = 100.0; // VEX Rotation Sensor reports in centidegrees (100 per degree)
-const double ACCEPTABLE_ANGLE_RANGE = 1.0; // Acceptable angle range for holding position (degrees)
+std::string current_state = "Nothing";
 
-bool hold_arm = false; //keep track of if we hold the arm or not
-
-// Convert centidegrees to degrees
-double get_degrees() {
-    return Arm_Sensor.get_position() / TICKS_PER_DEG;
+void initialize_gearbox() {
+    TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);  // Best for holding arm position
+    BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);  // Better for continuous spinning
 }
 
-void StopAll() { // stop all motion and dissable the arm pid
-    TopMotor.move(0);
-    BottomMotor.move(0);
-    hold_arm = false; 
-    pros::delay(20); // proper motor sync
+void intake() {
+    current_state = "Intaking";
+    TopMotor.move(127);
+    BottomMotor.move(-127);
 }
-
-// make this function not interfere with the arm hold when loading rings
-void Intake() { 
-    if (hold_arm){ // move with 1 motor if the arm is being held
-        BottomMotor.move(-127);
-    }
-    else {
-        TopMotor.move(127);
-        BottomMotor.move(-127); // move with 2 motors if the arm is not being held
-    }
-}
-
-void MarryUp_and_FullOut() { // raise the arm and disable the arm pid
+void raise_arm() {
+    current_state = "Arm Raising";
     TopMotor.move(-127);
     BottomMotor.move(127);
-    hold_arm = false;
 }
 
-void Load_Arm_PID() {
-    if (hold_arm) {
-        double currentPosition = get_degrees(); // Read sensor in degrees
-        error = Arm_Target - currentPosition;
-        
-        // New check: if the arm is within the acceptable angle range of the target, then hold position.
-        if (fabs(error) < ACCEPTABLE_ANGLE_RANGE) {
-            TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);  // Set motor to hold mode
-            TopMotor.move(0);                                   // Hold position
-            integral = 0;           // Reset the integral to avoid windup
-            previousError = error;  // Update previous error for consistency
-            return;                 // Exit early without further PID calculation
-        } else {
-            TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); // Use coast mode for active PID control
-        }
-        
-        integral += error;                      // Accumulate error over time
-        derivative = error - previousError;     // Determine the rate-of-change
-        
-        motorPower = (kP * error) + (kI * integral) + (kD * derivative);
-        
-        TopMotor.move(motorPower);                // Command the motor based on PID output
-        
-        previousError = error;
-        pros::delay(20); // Prevent CPU overload
+
+void set_arm_position() {
+    double current_angle = Arm_Sensor.get_angle();
+    double error = Arm_Target - current_angle;
+    
+    // Display debugging information on the V5 brain screen
+    static uint32_t lastPrint = 0;
+    if (pros::millis() - lastPrint > 50) {
+        pros::lcd::print(0, "Target: %f", Arm_Target);
+        pros::lcd::print(1, "Current: %f", current_angle);
+        pros::lcd::print(2, "Error: %f", error);
+        master.print(0, 0, "State: %s", current_state.c_str());  // Print to controller
+        lastPrint = pros::millis();
+    }
+    
+    if (abs(error) <= acceptable_angle_range) {
+        current_state = "Arm Holding";
+        TopMotor.brake();
+        BottomMotor.move(127);
+        integral = 0;
+        return;
+    }
+    
+    current_state = "Arm Raising";
+    // Integral term: sums up past error to help overcome consistent forces (like gravity)
+    // Limit how large this sum can get to prevent excessive correction
+    const double maxIntegral = 50.0;
+    integral += error;
+    integral = std::clamp(integral, -maxIntegral, maxIntegral);  // Keep integral term within bounds
+    
+    // Derivative term: looks at how fast error is changing
+    // Helps prevent overshooting by applying more correction when error changes quickly
+    double derivative = error - previousError;
+    
+    // Calculate motor power using PID formula
+    // P term: proportional to current error
+    // I term: proportional to accumulated error
+    // D term: proportional to rate of change of error
+    double motorPower = (error * kP) + (integral * kI) + (derivative * kD);
+    
+    // Keep motor power within valid range (-127 to 127)
+    motorPower = std::clamp(motorPower, -127.0, 127.0);
+    
+    // Apply power to motors
+    // Negative for top motor because that's how it raises the arm
+    TopMotor.move(-motorPower);
+    BottomMotor.move(motorPower);
+    
+    // Store current error for next iteration's derivative calculation
+    previousError = error;
+}
+
+void GearBox_Control() {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        //intaking 
+        intake();
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        //setting arm pos
+        set_arm_position();
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        //raising arm
+        raise_arm();
     }
     else {
-        TopMotor.move(0);
-        integral = 0;
+        current_state = "Nothing";
+    }
+    
+    // Update controller display even when no buttons are pressed
+    static uint32_t lastPrint = 0;
+    if (pros::millis() - lastPrint > 50) {
+        master.print(0, 0, "State: %s", current_state.c_str());
+        lastPrint = pros::millis();
     }
 }
 
-// stop holding position
-void Kill_Arm() {
-    hold_arm = false;
-    integral = 0;
-}
+    
 
-// main controll loop to run in main
-void Controll_Gears() {
-    // Print rotation sensor value to controller in degrees
-    pros::Controller(pros::E_CONTROLLER_MASTER).print(0, 0, "Deg: %.1f   ", get_degrees());
-
-    if (pros::Controller(pros::E_CONTROLLER_MASTER).get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { // R2 intakes only while pressed
-        Intake();
-    } else {
-        // Stop intake motors when R2 is released
-        TopMotor.move(0);
-        BottomMotor.move(0);
-    }
-
-    if (pros::Controller(pros::E_CONTROLLER_MASTER).get_digital(pros::E_CONTROLLER_DIGITAL_R1)) { // toggle the load position and unlock it with the same button
-
-        if (hold_arm) {
-            Kill_Arm();
-        } else {
-            hold_arm = true;
-            Load_Arm_PID();
-        }
-    }
-
-    if (pros::Controller(pros::E_CONTROLLER_MASTER).get_digital(pros::E_CONTROLLER_DIGITAL_L2)) { // L2 outtakes and raises the arm
-        MarryUp_and_FullOut();
-    }
-} 
+    
