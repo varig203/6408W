@@ -15,8 +15,15 @@ static double error = 0, previousError = 0;
 static double integral = 0, derivative = 0;
 static double motorPower = 0;
 
-const double Arm_Target = 1000; // adjust later for the proper loading angle
+const double Arm_Target = 313; // target in degrees
+const double TICKS_PER_DEG = 100.0; // VEX Rotation Sensor reports in centidegrees (100 per degree)
+
 bool hold_arm = false; //keep track of if we hold the arm or not
+
+// Convert centidegrees to degrees
+double get_degrees() {
+    return Arm_Sensor.get_position() / TICKS_PER_DEG;
+}
 
 void StopAll() { // stop all motion and dissable the arm pid
     TopMotor.move(0);
@@ -44,7 +51,7 @@ void MarryUp_and_FullOut() { // raise the arm and disable the arm pid
 
 void Load_Arm_PID() {
     if (hold_arm) {
-        double currentPosition = Arm_Sensor.get_position(); // Read sensor
+        double currentPosition = get_degrees(); // Read sensor in degrees
 
         error = Arm_Target - currentPosition;
         integral += error;  // Accumulate error over time
@@ -72,6 +79,9 @@ void Kill_Arm() {
 
 // main controll loop to run in main
 void Controll_Gears() {
+    // Print rotation sensor value to controller in degrees
+    pros::Controller(pros::E_CONTROLLER_MASTER).print(0, 0, "Deg: %.1f   ", get_degrees());
+
     if (pros::Controller(pros::E_CONTROLLER_MASTER).get_digital(pros::E_CONTROLLER_DIGITAL_R2)) { // R2 intakes only while pressed
         Intake();
     } else {
