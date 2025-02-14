@@ -81,6 +81,10 @@ void opcontrol() {
 	pros::MotorGroup left_mg({5, -6, 7});    // Left motors: forward port 5, reversed port 6, forward port 7
 	pros::MotorGroup right_mg({-1, 3, -4});   // Right motors: reversed port 1, forward port 3, reversed port 4
 
+	// Set all drive motors to coast
+	left_mg.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	right_mg.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+
 	// New constants for exponential drive with rescaled deadband and cubic mix
 	const double EXPO_PARAMETER = 0.5;  // 0 => fully linear, 1 => fully cubic (increased for more expo effect)
 	const int DEADBAND = 2;             // Further reduced deadband for finer control at very low inputs
