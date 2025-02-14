@@ -1,6 +1,28 @@
 #include "main.h"
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
 #include "../include/gearbox.hpp"    // Include the declaration for Controll_Gears
+#include "lemlib/api.hpp"  // Include lemlib API for chassis and drivetrain
+
+// Global drive objects under the lemlib framework:
+pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
+pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::green);
+
+lemlib::Drivetrain drivetrain( &right_motor_group, &left_motor_group,10, lemlib::Omniwheel::NEW_4, 360, 2);
+lemlib::ControllerSettings lateral_controller(10, 0, 3, 3, 1, 100, 3, 500, 20);
+lemlib::ControllerSettings angular_controller(2, 0, 10, 3, 1, 100, 3, 500, 0);
+pros::Rotation horizontal_encoder(16);
+pros::adi::Encoder vertical_encoder('C', 'D', true);
+pros::Imu imu(19);
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
+lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr, &horizontal_tracking_wheel, nullptr, &imu);
+lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
+
+// Setup function for drivetrain
+void setup_drivetrain() {
+	left_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	right_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+}
 
 /**
  * A callback function for LLEMU's center button.
@@ -28,8 +50,14 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 
+	// Set up drivetrain brake modes
+	setup_drivetrain();
+
 	pros::lcd::register_btn1_cb(on_center_button);
-	initialize_gearbox();  // Add this line
+	initialize_gearbox();
+	chassis.calibrate();
+
+	// The global chassis object will be used in opcontrol()
 }
 
 /**
@@ -77,46 +105,18 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::MotorGroup left_mg({5, -6, 7});    // Left motors: forward port 5, reversed port 6, forward port 7
-	pros::MotorGroup right_mg({-1, 3, -4});   // Right motors: reversed port 1, forward port 3, reversed port 4
-	pros::Imu Inertial(19);
-
-
-	// Set all drive motors to coast
-	left_mg.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	right_mg.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-
-	// New constants for exponential drive with rescaled deadband and cubic mix
-	const double EXPO_PARAMETER = 0.5;  // 0 => fully linear, 1 => fully cubic (increased for more expo effect)
-	const int DEADBAND = 2;             // Further reduced deadband for finer control at very low inputs
-
-    // Lambda to apply expo drive (with deadband compensation and remapping)
-    auto applyExpo = [=](int input) -> int {
-        if (abs(input) < DEADBAND)
-            return 0;
-        double sign = (input >= 0) ? 1.0 : -1.0;
-        // Remap input so that after deadband, full range [0, 1] is used
-        double normalized = (double)(abs(input) - DEADBAND) / (127 - DEADBAND);
-        // Apply a mix of linear and cubic response for exponential drive
-        double expo_val = (1 - EXPO_PARAMETER) * normalized + EXPO_PARAMETER * normalized * normalized * normalized;
-        return static_cast<int>(expo_val * 127 * sign);
-    };
-
-    // Variables to track previous states of the A and B buttons
-    bool a_button_prev = false;
+	pros::Controller controller(pros::E_CONTROLLER_MASTER);
+	bool a_button_prev = false;
     bool b_button_prev = false;
-
 	while (true) {
-		// Check if the A button was just pressed (edge detection)
-		bool a_button_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+		bool a_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
 		if (a_button_curr && !a_button_prev) {
 			doinker();  // Toggle the G port by calling the doinker function
 		}
 		a_button_prev = a_button_curr;
 
 		// Check if the B button was just pressed (edge detection)
-		bool b_button_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+		bool b_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
 		if (b_button_curr && !b_button_prev) {
 			clamp_fn();  // Toggle the H port by calling the clamp function
 		}
@@ -124,27 +124,18 @@ void opcontrol() {
 
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
+		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
+		
+		// Get throttle and turning values from the controller.
+		// Invert the throttle value because pushing forward returns a negative value.
+		int throttle = -controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+		// Use the raw right stick value for turning.
+		int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-		// Get raw joystick values
-		int forward = master.get_analog(ANALOG_LEFT_Y);
-		int turn = master.get_analog(ANALOG_RIGHT_X);
-
-		// Process values through the expo function
-		int forward_expo = applyExpo(forward);
-		int turn_expo = applyExpo(turn);
-
-		// Calculate motor powers
-		int left_power = forward_expo - turn_expo;
-		int right_power = forward_expo + turn_expo;
-
-		// Apply motor power
-		left_mg.move(left_power);
-		right_mg.move(right_power);
-
-		// Run gearbox control
+		// Use the global chassis object's arcade drive function.
+		chassis.arcade(throttle, turn, false, 0.75);
 		GearBox_Control();
 
-		pros::delay(20); // Run for 20 ms then update
+		pros::delay(25);
 	}
 }
