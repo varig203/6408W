@@ -5,17 +5,20 @@
 
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
-pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::green);
+pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::blue);
 
-lemlib::Drivetrain drivetrain( &right_motor_group, &left_motor_group,10, lemlib::Omniwheel::NEW_4, 360, 2);
+lemlib::Drivetrain drivetrain( &right_motor_group, &left_motor_group,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
 lemlib::ControllerSettings lateral_controller(10, 0, 3, 3, 1, 100, 3, 500, 20);
 lemlib::ControllerSettings angular_controller(2, 0, 10, 3, 1, 100, 3, 500, 0);
-pros::Rotation horizontal_encoder(16);
-pros::adi::Encoder vertical_encoder('C', 'D', true);
+pros::Rotation VerticalTracking(16);
 pros::Imu imu(19);
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
-lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr, &horizontal_tracking_wheel, nullptr, &imu);
+//lemlib::TrackingWheel horizontal_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_1, -5.75);
+lemlib::TrackingWheel vertical_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_275_HALF, -1);
+lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr, nullptr, nullptr, &imu);
+lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
+                                     10, // minimum output where drivetrain will move out of 127
+                                     3.519 // expo curve gain
+);
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
 // Setup function for drivetrain
@@ -55,7 +58,7 @@ void initialize() {
 
 	pros::lcd::register_btn1_cb(on_center_button);
 	initialize_gearbox();
-	chassis.calibrate();
+	chassis.calibrate();	
 
 	// The global chassis object will be used in opcontrol()
 }
