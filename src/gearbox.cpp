@@ -91,15 +91,17 @@ void intake() {
 
     if(WillRedGetSorted && red_detected) {
         current_state = "RED STOP";
-        TopMotor.brake();
-        BottomMotor.brake();
-        pros::delay(100);  // Hold for half a second
+        pros::delay(25);
+        TopMotor.move(10);
+        BottomMotor.move(-10);
+        pros::delay(250);  // Hold for half a second
     }
     else if(!WillRedGetSorted && blue_detected) {
         current_state = "BLUE STOP";
-        TopMotor.brake();
-        BottomMotor.brake();
-        pros::delay(100);  // Hold for half a second
+        pros::delay(25);
+        TopMotor.move(10);
+        BottomMotor.move(-10);
+        pros::delay(250);  // Hold for half a second
     }
     else {
         current_state = "INTAKING";
