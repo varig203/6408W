@@ -4,11 +4,15 @@
 #include <cmath>   // For abs() and other math functions
 #include "pros/adi.hpp"
 
+// Add these function declarations at the top with other declarations
+bool detect_red();
+bool detect_blue();
 
 pros::Motor TopMotor(9);
 pros::Motor BottomMotor(18);
 pros::Rotation Arm_Sensor(8);
 pros::Controller master(pros::E_CONTROLLER_MASTER);
+pros::Optical Optical_Sensor(12);
 
 const double Arm_Target = 310*100;  // 313 degrees * 100 (centidegrees)
 const double acceptable_angle_range = 25;  // 1 degree * 100 (centidegrees)
@@ -20,6 +24,10 @@ double integral = 0;
 double previousError = 0;
 
 std::string current_state = "Nothing";
+
+// Add at the top with other global variables
+bool WillRedGetSorted = false;
+bool up_button_prev = false;  // To track previous button state
 
 void initialize_gearbox() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -33,17 +41,38 @@ void initialize_gearbox() {
     pros::lcd::print(0, "Sensor Init: %d", Arm_Sensor.is_installed());
 }
 
-void intake() {
-    //current_state = "Intaking";
-    TopMotor.move(127);
-    BottomMotor.move(-127);
+bool detect_red() {
+    double hue = Optical_Sensor.get_hue();
+    bool is_red = (hue >= 340 || hue <= 20 && Optical_Sensor.get_proximity() < 200);
+    return is_red;
 }
+
+bool detect_blue() {
+    double hue = Optical_Sensor.get_hue();
+    bool is_blue = (hue >= 220 && hue <= 260 && Optical_Sensor.get_proximity() < 200);
+    return is_blue;
+}
+
+void intake() {
+    if(WillRedGetSorted && detect_red()){
+        TopMotor.move(0);
+        BottomMotor.move(0);
+    }
+    else if((WillRedGetSorted == false) && detect_blue()){
+        TopMotor.move(0);
+        BottomMotor.move(0);
+    }
+    else{
+        TopMotor.move(127);
+        BottomMotor.move(-127);
+    }
+}
+
 void raise_arm() {
     current_state = "Arm Raising";
     TopMotor.move(-127);
     BottomMotor.move(127);
 }
-
 
 void set_arm_position() {
     
@@ -83,6 +112,14 @@ void set_arm_position() {
 }
 
 void GearBox_Control() {
+    // Check for up button press (edge detection)
+    bool up_button_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_UP);
+    if (up_button_curr && !up_button_prev) {
+        WillRedGetSorted = !WillRedGetSorted;  // Toggle the state
+        pros::lcd::print(4, "Toggle: %d", WillRedGetSorted);  // Debug print
+    }
+    up_button_prev = up_button_curr;
+
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         current_state = "Intaking";
         TopMotor.move(127);
