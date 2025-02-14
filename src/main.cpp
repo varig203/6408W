@@ -80,6 +80,8 @@ void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::MotorGroup left_mg({5, -6, 7});    // Left motors: forward port 5, reversed port 6, forward port 7
 	pros::MotorGroup right_mg({-1, 3, -4});   // Right motors: reversed port 1, forward port 3, reversed port 4
+	pros::Imu Inertial(19);
+
 
 	// Set all drive motors to coast
 	left_mg.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);

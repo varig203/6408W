@@ -33,38 +33,88 @@ void initialize_gearbox() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     
-    // Reset and check rotation sensor
-    Arm_Sensor.reset();  // Reset the sensor to 0
-    pros::delay(100);    // Give it time to reset
+    // Initialize optical sensor
+    Optical_Sensor.disable_gesture();  // We don't need gesture detection
+    Optical_Sensor.set_led_pwm(100);   // Set LED brightness (0-100)
     
-    // Print initial sensor status
-    pros::lcd::print(0, "Sensor Init: %d", Arm_Sensor.is_installed());
+    // Reset and check rotation sensor
+    Arm_Sensor.reset();
+    pros::delay(100);
+    
+    // Print sensor statuses
+    pros::lcd::print(0, "Arm Sensor: %d", Arm_Sensor.is_installed());
+    pros::lcd::print(1, "Optical: %d", Optical_Sensor.is_installed());
 }
 
 bool detect_red() {
     double hue = Optical_Sensor.get_hue();
-    bool is_red = (hue >= 340 || hue <= 20 && Optical_Sensor.get_proximity() < 200);
+    int proximity = Optical_Sensor.get_proximity();
+    
+    // Red hue is around 17 degrees, give it a small range (±5 degrees)
+    bool is_red = (hue >= 12 && hue <= 22);
+    
+    // Debug print
+    static uint32_t lastPrint = 0;
+    if (pros::millis() - lastPrint > 50) {
+        pros::lcd::print(7, "Red? %d H:%.1f P:%d", is_red, hue, proximity);
+        lastPrint = pros::millis();
+    }
+    
     return is_red;
 }
 
 bool detect_blue() {
     double hue = Optical_Sensor.get_hue();
-    bool is_blue = (hue >= 220 && hue <= 260 && Optical_Sensor.get_proximity() < 200);
+    int proximity = Optical_Sensor.get_proximity();
+    
+    // Blue hue is around 217 degrees, give it a small range (±5 degrees)
+    bool is_blue = (hue >= 212 && hue <= 222);
+    
+    // Debug print
+    static uint32_t lastPrint = 0;
+    if (pros::millis() - lastPrint > 50) {
+        pros::lcd::print(8, "Blue? %d H:%.1f P:%d", is_blue, hue, proximity);
+        lastPrint = pros::millis();
+    }
+    
     return is_blue;
 }
 
 void intake() {
-    if(WillRedGetSorted && detect_red()){
-        TopMotor.move(0);
-        BottomMotor.move(0);
+    TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+    // Get current sensor readings for debug
+    double hue = Optical_Sensor.get_hue();
+    bool red_detected = detect_red();
+    bool blue_detected = detect_blue();
+
+    if(WillRedGetSorted && red_detected) {
+        current_state = "RED STOP";
+        TopMotor.brake();
+        BottomMotor.brake();
+        pros::delay(100);  // Hold for half a second
     }
-    else if((WillRedGetSorted == false) && detect_blue()){
-        TopMotor.move(0);
-        BottomMotor.move(0);
+    else if(!WillRedGetSorted && blue_detected) {
+        current_state = "BLUE STOP";
+        TopMotor.brake();
+        BottomMotor.brake();
+        pros::delay(100);  // Hold for half a second
     }
-    else{
+    else {
+        current_state = "INTAKING";
         TopMotor.move(127);
         BottomMotor.move(-127);
+    }
+
+    // Debug printing
+    static uint32_t lastPrint = 0;
+    if (pros::millis() - lastPrint > 50) {
+        pros::lcd::print(0, "Mode: %s", WillRedGetSorted ? "RED" : "BLUE");
+        pros::lcd::print(1, "Hue: %.1f", hue);
+        pros::lcd::print(2, "Red?: %d Blue?: %d", red_detected, blue_detected);
+        pros::lcd::print(3, "State: %s", current_state.c_str());
+        lastPrint = pros::millis();
     }
 }
 
@@ -117,13 +167,13 @@ void GearBox_Control() {
     if (up_button_curr && !up_button_prev) {
         WillRedGetSorted = !WillRedGetSorted;  // Toggle the state
         pros::lcd::print(4, "Toggle: %d", WillRedGetSorted);  // Debug print
+        master.print(0, 0, "Sorting: %s", WillRedGetSorted ? "RED" : "BLUE");  // Added controller print
     }
     up_button_prev = up_button_curr;
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         current_state = "Intaking";
-        TopMotor.move(127);
-        BottomMotor.move(-127);
+        intake();
     }
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         set_arm_position();
@@ -134,21 +184,34 @@ void GearBox_Control() {
         BottomMotor.move(127);
     }
     else {
-        // When no buttons are pressed, stop motors
         current_state = ".";
         TopMotor.brake();
         BottomMotor.brake();
     }
+
+    // Update all displays (brain and controller)
     static uint32_t lastPrint = 0;
     if (pros::millis() - lastPrint > 50) {
-        
         pros::lcd::print(2, "Current Angle: %.2f", Arm_Sensor.get_position()/100);
         pros::lcd::print(3, "bottom motor velocity: %.2f", BottomMotor.get_actual_velocity());
         pros::lcd::print(4, "current state: %s", current_state.c_str());
+        pros::lcd::print(5, "Optical Hue: %.1f", Optical_Sensor.get_hue());
+        pros::lcd::print(6, "Proximity: %d", Optical_Sensor.get_proximity());
+        
+        // Add color detection status
+        if (detect_red()) {
+            pros::lcd::print(7, "RED DETECTED!");
+        } else if (detect_blue()) {
+            pros::lcd::print(7, "BLUE DETECTED!");
+        } else {
+            pros::lcd::print(7, "No color detected");
+        }
+        
+        // Show sorting mode
+        pros::lcd::print(8, "Sorting: %s", WillRedGetSorted ? "RED" : "BLUE");
+        
         lastPrint = pros::millis();
     }
-    // Update all displays (brain and controller)
-
 }
 
     
