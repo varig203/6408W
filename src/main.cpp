@@ -21,6 +21,9 @@ lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
 );
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
+// At the top after includes
+ASSET(TestPath_txt);  // Note: periods are replaced with underscores in asset names
+
 // Setup function for drivetrain
 void setup_drivetrain() {
 	left_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
@@ -92,7 +95,23 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	// Set initial pose based on the path's starting coordinates
+	chassis.setPose(47.458, 13.276, 0);  // Starting coordinates from TestPath.txt
+
+	// First path segment
+	chassis.follow(TestPath_txt, 15, 2000); //first corner
+	chassis.follow(TestPath_txt, 15, 2000);//second mogo
+	chassis.follow(TestPath_txt, 15, 2000);//second corner
+	chassis.follow(TestPath_txt, 15, 2000);//pick one ring up
+	chassis.follow(TestPath_txt, 15, 2000);//pick up blue mogo
+	chassis.follow(TestPath_txt, 15, 2000);//drop off blue mogo in corner
+	chassis.follow(TestPath_txt, 15, 2000);//pick up final mogo
+	chassis.follow(TestPath_txt, 15, 2000);//final corner
+
+	
+
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
