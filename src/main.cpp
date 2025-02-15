@@ -21,16 +21,15 @@ lemlib::ControllerSettings lateral_controller(
     300,  // Gentle acceleration
     15    // Gentle acceleration changes
 );
-lemlib::ControllerSettings angular_controller(
-    3,    // Increase kP if turns are too slow
-    0.1,  // Add small kI if turns aren't accurate
-    12,   // Increase kD if turning oscillates
-    2,    // Adjust startI like lateral
-    1.5,  // Adjust timeout like lateral
-    100,  // Max turning speed
-    2,    // Lower min speed for precise turning
-    400,  // Lower acceleration for smoother turns
-    20    // Higher jerk for smoother acceleration
+lemlib::ControllerSettings angular_controller(1.65, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              12, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
 pros::Rotation VerticalTracking(16);
 pros::Imu imu(19);
@@ -118,9 +117,12 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	chassis.setPose(0, 0, 0);  // Start at origin
-	chassis.follow(TestPath_txt, 15, 2000);  // Follow the example path
+	//chassis.setPose(47.458, 13.276, 100);  // Start at origin
+	//chassis.follow(TestPath_txt, 15, 2000);  // Follow the example path
+	chassis.setPose(0, 0, 0);
+	chassis.turnToHeading(180,1000);
 }
+
 
 /**
  * Runs the operator control code. This function will be started in its own task
