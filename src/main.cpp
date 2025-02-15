@@ -10,16 +10,15 @@ pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::blue);
 lemlib::Drivetrain drivetrain( &right_motor_group, &left_motor_group,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
 //https://lemlib.readthedocs.io/en/stable/tutorials/4_pid_tuning.html
 //^ PID Tuning Guide
-lemlib::ControllerSettings lateral_controller(
-    8,    // Lower kP for smoother motion
-    0,    // No integral
-    4,    // Moderate derivative
-    3,    // Standard startI
-    2,    // Longer timeout
-    90,   // Limited speed
-    3,    // Standard minimum speed
-    300,  // Gentle acceleration
-    15    // Gentle acceleration changes
+lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              150, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              20 // maximum acceleration (slew)
 );
 lemlib::ControllerSettings angular_controller(1.65, // proportional gain (kP)
                                               0, // integral gain (kI)
@@ -31,10 +30,10 @@ lemlib::ControllerSettings angular_controller(1.65, // proportional gain (kP)
                                               500, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
-pros::Rotation VerticalTracking(16);
+pros::Rotation VerticalTracking(-16);
 pros::Imu imu(19);
 //lemlib::TrackingWheel horizontal_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_1, -5.75);
-lemlib::TrackingWheel vertical_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_275_HALF, -1);
+lemlib::TrackingWheel vertical_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_2, -1);
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr, nullptr, nullptr, &imu);
 lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
                                      10, // minimum output where drivetrain will move out of 127
@@ -117,13 +116,10 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	//chassis.setPose(47.458, 13.276, 100);  // Start at origin
-	//chassis.follow(TestPath_txt, 15, 2000);  // Follow the example path
+	// Optionally set the starting pose. In this example we keep it at the origin
 	chassis.setPose(0, 0, 0);
-	chassis.turnToHeading(180,1000);
+	chassis.moveToPoint(0,24,5000);
 }
-
-
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
