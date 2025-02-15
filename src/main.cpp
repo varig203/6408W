@@ -8,8 +8,30 @@ pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
 pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::blue);
 
 lemlib::Drivetrain drivetrain( &right_motor_group, &left_motor_group,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
-lemlib::ControllerSettings lateral_controller(10, 0, 3, 3, 1, 100, 3, 500, 20);
-lemlib::ControllerSettings angular_controller(2, 0, 10, 3, 1, 100, 3, 500, 0);
+//https://lemlib.readthedocs.io/en/stable/tutorials/4_pid_tuning.html
+//^ PID Tuning Guide
+lemlib::ControllerSettings lateral_controller(
+    8,    // Lower kP for smoother motion
+    0,    // No integral
+    4,    // Moderate derivative
+    3,    // Standard startI
+    2,    // Longer timeout
+    90,   // Limited speed
+    3,    // Standard minimum speed
+    300,  // Gentle acceleration
+    15    // Gentle acceleration changes
+);
+lemlib::ControllerSettings angular_controller(
+    3,    // Increase kP if turns are too slow
+    0.1,  // Add small kI if turns aren't accurate
+    12,   // Increase kD if turning oscillates
+    2,    // Adjust startI like lateral
+    1.5,  // Adjust timeout like lateral
+    100,  // Max turning speed
+    2,    // Lower min speed for precise turning
+    400,  // Lower acceleration for smoother turns
+    20    // Higher jerk for smoother acceleration
+);
 pros::Rotation VerticalTracking(16);
 pros::Imu imu(19);
 //lemlib::TrackingWheel horizontal_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_1, -5.75);
