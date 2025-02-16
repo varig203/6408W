@@ -6,13 +6,22 @@
 void Blue_Side_Auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0,24,0,1550);
+	chassis.moveToPose(0, 26, 0, 3000);
 	pros::delay(1000);
 	clamp_fn();
-    pros::delay(1000);
-    intake();
-    pros::delay(1000);
-    stop_intake();
+	pros::delay(250);
+	intake();
+	chassis.moveToPose(0,35,0, 1000);
+	chassis.turnToHeading(270, 500);
+	pros::delay(1000);
+	chassis.moveToPoint(24,32,2000, {.forwards = false}, true);
+	pros::delay(500);
+	chassis.moveToPoint(35,49,2000, {.forwards = false}, true);
+	chassis.turnToHeading(90,1000);
+	pros::delay(1000);
+	chassis.moveToPoint(8,49,2000, {.forwards = false,.maxSpeed = 60}, true);
+	pros::delay(4000);
+	stop_intake();
 }
 
 void Red_Side_Auton() {
