@@ -35,6 +35,7 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
+#include "lemlib/api.hpp"
 
 /**
  * You should add more #includes here
@@ -76,5 +77,7 @@ void opcontrol(void);
  */
 //#include <iostream>
 #endif
+
+extern lemlib::Chassis chassis;
 
 #endif  // _PROS_MAIN_H_

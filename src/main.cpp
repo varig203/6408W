@@ -2,7 +2,7 @@
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
 #include "../include/gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
 #include "lemlib/api.hpp"  // Include lemlib API for chassis and drivetrain
-
+#include "autons.hpp"
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
 pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::blue);
@@ -49,6 +49,7 @@ void setup_drivetrain() {
 	left_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 	right_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 }
+
 
 /**
  * A callback function for LLEMU's center button.
@@ -117,9 +118,7 @@ void competition_initialize() {}
  */
 void autonomous() {
 	// Optionally set the starting pose. In this example we keep it at the origin
-	chassis.setPose(0,0,0);
-	clamp_fn();
-	chassis.moveToPose(0,21,0,1000);
+	Blue_Side_Auton();
 }
 /**
  * Runs the operator control code. This function will be started in its own task
