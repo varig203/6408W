@@ -40,10 +40,6 @@ void initialize_gearbox() {
     // Reset and check rotation sensor
     Arm_Sensor.reset();
     pros::delay(100);
-    
-    // Print sensor statuses
-    pros::lcd::print(0, "Arm Sensor: %d", Arm_Sensor.is_installed());
-    pros::lcd::print(1, "Optical: %d", Optical_Sensor.is_installed());
 }
 
 bool detect_red() {
@@ -52,13 +48,6 @@ bool detect_red() {
     
     // Red hue is around 17 degrees, give it a small range (±5 degrees)
     bool is_red = (hue >= 12 && hue <= 22);
-    
-    // Debug print
-    static uint32_t lastPrint = 0;
-    if (pros::millis() - lastPrint > 50) {
-        pros::lcd::print(7, "Red? %d H:%.1f P:%d", is_red, hue, proximity);
-        lastPrint = pros::millis();
-    }
     
     return is_red;
 }
@@ -70,14 +59,11 @@ bool detect_blue() {
     // Blue hue is around 217 degrees, give it a small range (±5 degrees)
     bool is_blue = (hue >= 212 && hue <= 222);
     
-    // Debug print
-    static uint32_t lastPrint = 0;
-    if (pros::millis() - lastPrint > 50) {
-        pros::lcd::print(8, "Blue? %d H:%.1f P:%d", is_blue, hue, proximity);
-        lastPrint = pros::millis();
-    }
-    
     return is_blue;
+}
+void stop_intake() {
+    TopMotor.brake();
+    BottomMotor.brake();
 }
 
 void intake() {
@@ -91,32 +77,22 @@ void intake() {
 
     if(WillRedGetSorted && red_detected) {
         current_state = "RED STOP";
-        pros::delay(25);
-        TopMotor.move(10);
-        BottomMotor.move(-10);
+        pros::delay(40);
+        TopMotor.brake();
+        BottomMotor.move(127);
         pros::delay(250);  // Hold for half a second
     }
     else if(!WillRedGetSorted && blue_detected) {
         current_state = "BLUE STOP";
-        pros::delay(25);
-        TopMotor.move(10);
-        BottomMotor.move(-10);
+        pros::delay(40);
+        TopMotor.brake();
+        BottomMotor.move(127);
         pros::delay(250);  // Hold for half a second
     }
     else {
         current_state = "INTAKING";
         TopMotor.move(127);
         BottomMotor.move(-127);
-    }
-
-    // Debug printing
-    static uint32_t lastPrint = 0;
-    if (pros::millis() - lastPrint > 50) {
-        pros::lcd::print(0, "Mode: %s", WillRedGetSorted ? "RED" : "BLUE");
-        pros::lcd::print(1, "Hue: %.1f", hue);
-        pros::lcd::print(2, "Red?: %d Blue?: %d", red_detected, blue_detected);
-        pros::lcd::print(3, "State: %s", current_state.c_str());
-        lastPrint = pros::millis();
     }
 }
 
@@ -132,9 +108,6 @@ void set_arm_position() {
     int32_t raw_position = Arm_Sensor.get_position();
     double current_angle = Arm_Sensor.get_position();  // This returns centidegrees
     double error = Arm_Target - current_angle;
-    
-    // Debug printing
-    
     
     if (abs(error) <= acceptable_angle_range) {  // Now checking if within 1 degree
         if(BottomMotor.get_actual_velocity() < 5||BottomMotor.get_actual_velocity() > -5){
@@ -154,7 +127,6 @@ void set_arm_position() {
         current_state = "Arm Moving";
     }
     
-    //current_state = "Arm Moving";
     double motorPower = error * kP;
     motorPower = std::clamp(motorPower, -127.0, 127.0);
     TopMotor.move(motorPower);
@@ -168,7 +140,6 @@ void GearBox_Control() {
     bool up_button_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_UP);
     if (up_button_curr && !up_button_prev) {
         WillRedGetSorted = !WillRedGetSorted;  // Toggle the state
-        pros::lcd::print(4, "Toggle: %d", WillRedGetSorted);  // Debug print
         master.print(0, 0, "Sorting: %s", WillRedGetSorted ? "RED" : "BLUE");  // Added controller print
     }
     up_button_prev = up_button_curr;
@@ -189,30 +160,6 @@ void GearBox_Control() {
         current_state = ".";
         TopMotor.brake();
         BottomMotor.brake();
-    }
-
-    // Update all displays (brain and controller)
-    static uint32_t lastPrint = 0;
-    if (pros::millis() - lastPrint > 50) {
-        pros::lcd::print(2, "Current Angle: %.2f", Arm_Sensor.get_position()/100);
-        pros::lcd::print(3, "bottom motor velocity: %.2f", BottomMotor.get_actual_velocity());
-        pros::lcd::print(4, "current state: %s", current_state.c_str());
-        pros::lcd::print(5, "Optical Hue: %.1f", Optical_Sensor.get_hue());
-        pros::lcd::print(6, "Proximity: %d", Optical_Sensor.get_proximity());
-        
-        // Add color detection status
-        if (detect_red()) {
-            pros::lcd::print(7, "RED DETECTED!");
-        } else if (detect_blue()) {
-            pros::lcd::print(7, "BLUE DETECTED!");
-        } else {
-            pros::lcd::print(7, "No color detected");
-        }
-        
-        // Show sorting mode
-        pros::lcd::print(8, "Sorting: %s", WillRedGetSorted ? "RED" : "BLUE");
-        
-        lastPrint = pros::millis();
     }
 }
 

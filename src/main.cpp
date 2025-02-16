@@ -1,6 +1,6 @@
 #include "main.h"
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
-#include "../include/gearbox.hpp"    // Include the declaration for Controll_Gears
+#include "../include/gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
 #include "lemlib/api.hpp"  // Include lemlib API for chassis and drivetrain
 
 // Global drive objects under the lemlib framework:
@@ -12,7 +12,7 @@ lemlib::Drivetrain drivetrain( &right_motor_group, &left_motor_group,11.5, lemli
 //^ PID Tuning Guide
 lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              150, // derivative gain (kD)
+                                              170, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
@@ -33,11 +33,11 @@ lemlib::ControllerSettings angular_controller(1.65, // proportional gain (kP)
 pros::Rotation VerticalTracking(-16);
 pros::Imu imu(19);
 //lemlib::TrackingWheel horizontal_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_1, -5.75);
-lemlib::TrackingWheel vertical_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_2, -1);
+lemlib::TrackingWheel vertical_tracking_wheel(&VerticalTracking, lemlib::Omniwheel::NEW_2, 1);
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr, nullptr, nullptr, &imu);
 lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
                                      10, // minimum output where drivetrain will move out of 127
-                                     3.519 // expo curve gain
+                                     5 // expo curve gain
 );
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
@@ -117,8 +117,6 @@ void competition_initialize() {}
  */
 void autonomous() {
 	// Optionally set the starting pose. In this example we keep it at the origin
-	chassis.setPose(0, 0, 0);
-	chassis.moveToPoint(0,24,5000);
 }
 /**
  * Runs the operator control code. This function will be started in its own task
