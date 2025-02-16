@@ -69,6 +69,7 @@ void stop_intake() {
 void intake() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    
 
     // Get current sensor readings for debug
     double hue = Optical_Sensor.get_hue();

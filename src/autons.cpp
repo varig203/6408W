@@ -6,9 +6,13 @@
 void Blue_Side_Auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0,22,0,1250);
+	chassis.moveToPose(0,24,0,1550);
 	pros::delay(1000);
 	clamp_fn();
+    pros::delay(1000);
+    intake();
+    pros::delay(1000);
+    stop_intake();
 }
 
 void Red_Side_Auton() {
