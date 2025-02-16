@@ -117,6 +117,9 @@ void competition_initialize() {}
  */
 void autonomous() {
 	// Optionally set the starting pose. In this example we keep it at the origin
+	chassis.setPose(0,0,0);
+	clamp_fn();
+	chassis.moveToPose(0,21,0,1000);
 }
 /**
  * Runs the operator control code. This function will be started in its own task
