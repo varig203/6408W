@@ -3,5 +3,5 @@
 
 void Blue_Side_Auton();
 void Red_Side_Auton();
-
+void Blue_Goal_Auton();
 #endif 
