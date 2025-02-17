@@ -16,10 +16,10 @@ void Blue_Side_Auton() {
 	pros::delay(1000);
 	chassis.moveToPoint(24,32,2000, {.forwards = false}, true);
 	pros::delay(500);
-	chassis.moveToPoint(35,49,2000, {.forwards = false}, true);
+	chassis.moveToPoint(35,47,2000, {.forwards = false}, true);
 	chassis.turnToHeading(90,1000);
 	pros::delay(1000);
-	chassis.moveToPoint(8,49,2000, {.forwards = false,.maxSpeed = 60}, true);
+	chassis.moveToPoint(8,50.5,2000, {.forwards = false,.maxSpeed = 60}, true);
 	pros::delay(4000);
 	stop_intake();
 }
@@ -37,10 +37,10 @@ void Red_Side_Auton() {
 	pros::delay(1000);
 	chassis.moveToPoint(-24,32,2000, {.forwards = false}, true);
 	pros::delay(500);
-	chassis.moveToPoint(-35,49,2000, {.forwards = false}, true);
+	chassis.moveToPoint(-35,48,2000, {.forwards = false}, true);
 	chassis.turnToHeading(270,1000);
 	pros::delay(1000);
-	chassis.moveToPoint(-8,49,2000, {.forwards = false,.maxSpeed = 60}, true);
+	chassis.moveToPoint(-8,50.5,2000, {.forwards = false,.maxSpeed = 60}, true);
 	pros::delay(4000);
 	stop_intake();
 }

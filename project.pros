@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "vex",
+    "project_name": "test code",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -298,7 +298,8 @@
       }
     },
     "upload_options": {
-      "icon": "pros"
+      "icon": "pros",
+      "slot": 6
     },
     "use_early_access": false
   }
