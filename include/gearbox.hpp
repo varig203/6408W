@@ -8,7 +8,7 @@ void GearBox_Control();
 void intake();
 void raise_arm();
 void stop_intake();
-
+void auton_intake();
 void initialize_gearbox();
 
 #endif // GEARBOX_HPP 

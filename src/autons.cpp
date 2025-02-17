@@ -10,7 +10,7 @@ void Blue_Side_Auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	intake();
+	auton_intake();
 	chassis.moveToPose(0,35,0, 1000);
 	chassis.turnToHeading(270, 500);
 	pros::delay(1000);
@@ -31,7 +31,7 @@ void Red_Side_Auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	intake();
+	auton_intake();
 	chassis.moveToPose(0,35,0, 1000);
 	chassis.turnToHeading(90, 500);
 	pros::delay(1000);
@@ -52,7 +52,7 @@ void Blue_Goal_Auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	intake();
+	auton_intake();
 	chassis.turnToHeading(90, 500);
 	pros::delay(1000);
 	chassis.moveToPoint(-24, 32, 2000, {.forwards = false}, true);
@@ -67,7 +67,7 @@ void Red_Goal_Auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	intake();
+	auton_intake();
 	chassis.turnToHeading(270, 500);
 	pros::delay(1000);
 	chassis.moveToPoint(24, 32, 2000, {.forwards = false}, true);

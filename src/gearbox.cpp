@@ -66,6 +66,11 @@ void stop_intake() {
     BottomMotor.brake();
 }
 
+void auton_intake() {
+    TopMotor.move(127);
+    BottomMotor.move(-127);
+}
+
 void intake() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
