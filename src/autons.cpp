@@ -75,3 +75,14 @@ void Red_Goal_Auton() {
 	stop_intake();
     chassis.moveToPoint(0, 40, 2000, {.forwards = false}, true);
 }
+void universal_auton() {
+    chassis.setPose(0,0,0);
+	clamp_fn();
+	chassis.moveToPose(0, 26, 0, 3000);
+	pros::delay(1000);
+	clamp_fn();
+	pros::delay(250);
+	auton_intake();
+    pros::delay(2000);
+    stop_intake();
+}
