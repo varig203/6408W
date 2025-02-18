@@ -70,13 +70,14 @@ void auton_intake() {
     TopMotor.move(127);
     BottomMotor.move(-127);
 }
-void auton_intake_handler() {
+void auton_intake_handler(int timeout_ms) {
     uint32_t timer_start = pros::millis();
-    while ((pros::millis()- timer_start) < 6000){
+    while ((pros::millis() - timer_start) < timeout_ms) {
         intake();
         pros::delay(20);
     }
     stop_intake();
+
 }
 
 

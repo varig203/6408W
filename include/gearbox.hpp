@@ -10,6 +10,6 @@ void raise_arm();
 void stop_intake();
 void auton_intake();
 void initialize_gearbox();
-void auton_intake_handler();
+void auton_intake_handler(int timeout_ms);
 
 #endif // GEARBOX_HPP 
