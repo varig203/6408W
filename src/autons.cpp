@@ -86,3 +86,9 @@ void universal_auton() {
     pros::delay(2000);
     stop_intake();
 }
+
+void test(){
+    // Now we can specify a custom timeout (e.g., 3000ms = 3 seconds)
+    pros::Task IntakeTask([]() { auton_intake_handler(3000); }, "Intake Task");
+    chassis.moveToPose(0,10,0,500);
+}
