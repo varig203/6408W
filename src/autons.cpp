@@ -6,7 +6,7 @@
 void Blue_Side_Auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0, 26, 0, 3000);
+	chassis.moveToPose(0, 28, 0, 3000);
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
@@ -27,7 +27,7 @@ void Blue_Side_Auton() {
 void Red_Side_Auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0, 26, 0, 3000);
+	chassis.moveToPose(0, 28, 0, 3000);
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
@@ -48,7 +48,7 @@ void Red_Side_Auton() {
 void Blue_Goal_Auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0, 26, 0, 3000);
+	chassis.moveToPose(0, 28, 0, 3000);
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
@@ -58,12 +58,12 @@ void Blue_Goal_Auton() {
 	chassis.moveToPoint(-24, 32, 2000, {.forwards = false}, true);
 	pros::delay(2000);
 	stop_intake();
-    chassis.moveToPoint(3, 40, 2000, {.forwards = false}, true);
+    chassis.moveToPoint(14, 40, 2000, {.forwards = false}, true);
 }
 void Red_Goal_Auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0, 26, 0, 3000);
+	chassis.moveToPose(0, 28, 0, 3000);
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
@@ -73,12 +73,12 @@ void Red_Goal_Auton() {
 	chassis.moveToPoint(24, 32, 2000, {.forwards = false}, true);
 	pros::delay(2000);
 	stop_intake();
-    chassis.moveToPoint(0, 40, 2000, {.forwards = false}, true);
+    chassis.moveToPoint(-14, 40, 2000, {.forwards = false}, true);
 }
 void universal_auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0, 26, 0, 3000);
+	chassis.moveToPose(0, 28, 0, 3000);
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);

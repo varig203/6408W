@@ -118,7 +118,7 @@ void competition_initialize() {}
  */
 void autonomous() {
 	// Optionally set the starting pose. In this example we keep it at the origin
-	Red_Side_Auton();
+	universal_auton();
 }
 /**
  * Runs the operator control code. This function will be started in its own task
