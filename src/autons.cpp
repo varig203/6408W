@@ -86,3 +86,9 @@ void universal_auton() {
     pros::delay(2000);
     stop_intake();
 }
+
+void test(){
+    // Create the task with a lambda that calls our handler
+    pros::Task IntakeTask([]() { auton_intake_handler(); }, "Intake Task");
+    chassis.moveToPose(0,10,0,500);
+}
