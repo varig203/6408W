@@ -1,8 +1,18 @@
 #include "main.h"
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
-#include "../include/gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
-#include "lemlib/api.hpp"  // Include lemlib API for chassis and drivetrain
+#include "gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
 #include "autons.hpp"
+
+// Auton selector setup
+// 
+rd::Selector autonSelector({
+	{"Blue Ring", Blue_Side_Auton},
+	{"Blue Goal", Blue_Goal_Auton},
+	{"Red Ring", Red_Side_Auton},
+	{"Red Goals", Red_Goal_Auton},
+	{"Skills", skills},
+});
+
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
 pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::blue);
@@ -50,23 +60,6 @@ void setup_drivetrain() {
 	right_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 }
 
-
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -74,17 +67,13 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
 
 	// Set up drivetrain brake modes
 	setup_drivetrain();
-
-	pros::lcd::register_btn1_cb(on_center_button);
 	initialize_gearbox();
 	chassis.calibrate();	
 
-	// The global chassis object will be used in opcontrol()
+	autonSelector.focus();
 }
 
 /**
@@ -117,8 +106,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	// Optionally set the starting pose. In this example we keep it at the origin
-	Red_Side_Auton();
+	autonSelector.run_auton();
 }
 /**
  * Runs the operator control code. This function will be started in its own task
