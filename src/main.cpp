@@ -4,7 +4,7 @@
 #include "autons.hpp"
 
 // Auton selector setup
-// 
+// Docs https://robodash.readthedocs.io/en/latest/
 rd::Selector autonSelector({
 	{"Blue Ring", Blue_Side_Auton},
 	{"Blue Goal", Blue_Goal_Auton},
@@ -123,21 +123,21 @@ void autonomous() {
  */
 void opcontrol() {
 	pros::Controller controller(pros::E_CONTROLLER_MASTER);
-	// bool a_button_prev = false;
-    // bool b_button_prev = false;
+	bool a_button_prev = false;
+    bool b_button_prev = false;
 	while (true) {
-		// bool a_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
-		// if (a_button_curr && !a_button_prev) {
-		// 	doinker();  // Toggle the G port by calling the doinker function
-		// }
-		// a_button_prev = a_button_curr;
+		bool a_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+		if (a_button_curr && !a_button_prev) {
+			doinker();  // Toggle the G port by calling the doinker function
+		}
+		a_button_prev = a_button_curr;
 
-		// // Check if the B button was just pressed (edge detection)
-		// bool b_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
-		// if (b_button_curr && !b_button_prev) {
-		// 	clamp_fn();  // Toggle the H port by calling the clamp function
-		// }
-		// b_button_prev = b_button_curr;
+		// Check if the B button was just pressed (edge detection)
+		bool b_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+		if (b_button_curr && !b_button_prev) {
+			clamp_fn();  // Toggle the H port by calling the clamp function
+		}
+		b_button_prev = b_button_curr;
 
 		// pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		//                  (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
