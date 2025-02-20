@@ -1,6 +1,5 @@
 #include "main.h"  // Ensure all PROS definitions are available
 #include "pnuematic.hpp"
-#include "pros/adi.hpp"  // still needed for pros::adi::DigitalOut
 
 // Create a static digital output instance for port 'H' using the updated type
 static pros::adi::DigitalOut clamp_port('H');

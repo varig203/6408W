@@ -2,7 +2,6 @@
 #include <string>  // For std::string
 #include "gearbox.hpp"  // For function declarations
 #include <cmath>   // For abs() and other math functions
-#include "pros/adi.hpp"
 
 // Add these function declarations at the top with other declarations
 bool detect_red();
