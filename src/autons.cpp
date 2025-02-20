@@ -86,8 +86,9 @@ void universal_auton() {
     stop_intake();
 }
 
-void skills() {} //creating for now for auton selector
+void skills() {} // Creating for now for auton selector
 
+// REMEMBER TO NEVER MAKE TASKS SHORT LIVED
 void test(){
     // Now we can specify a custom timeout (e.g., 3000ms = 3 seconds)
     pros::Task IntakeTask([]() { auton_intake_handler(3000); }, "Intake Task");

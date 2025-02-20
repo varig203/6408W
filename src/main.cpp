@@ -4,6 +4,14 @@
 #include "autons.hpp"
 #include "team_logo.h"
 
+/******************************
+ *       DANIEL'S TODO:       *
+ *       - CLEANUP CODE       *
+ *     - CLEANUP COMMENTS     *
+ * - RESTRUCTURE IF NECESSARY *
+ *      - OPTIMIZE CODE       *
+ ******************************/
+
 // Auton selector setup
 // Docs https://robodash.readthedocs.io/en/latest/
 rd::Selector autonSelector({
@@ -14,14 +22,14 @@ rd::Selector autonSelector({
 	{"Skills", skills},
 });
 
-rd::Console console;
-rd::Image image1(&team_logo,"team logo");
+rd::Console console; // Creating the terminal
+rd::Image image1(&team_logo,"team logo"); // Creating the image
 
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
 pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::blue);
 
-lemlib::Drivetrain drivetrain( &right_motor_group, &left_motor_group,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
+lemlib::Drivetrain drivetrain(&right_motor_group, &left_motor_group,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
 //https://lemlib.readthedocs.io/en/stable/tutorials/4_pid_tuning.html
 //^ PID Tuning Guide
 lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
@@ -71,7 +79,7 @@ void setup_drivetrain() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	// Set up drivetrain brake modes
+	// Set up drivetrain brake modes and initalize gearbox and calibrate drive sensors
 	setup_drivetrain();
 	initialize_gearbox();
 	chassis.calibrate();	
@@ -110,6 +118,7 @@ void competition_initialize() {}
  */
 void autonomous() {
 	autonSelector.run_auton();
+	image1.focus(); // Shows picture for after auton
 }
 /**
  * Runs the operator control code. This function will be started in its own task
