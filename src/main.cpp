@@ -37,7 +37,7 @@ lemlib::TrackingWheel vertical_tracking_wheel(&VerticalTracking, lemlib::Omniwhe
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr, nullptr, nullptr, &imu);
 lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
                                      10, // minimum output where drivetrain will move out of 127
-                                     5 // expo curve gain
+                                     2 // expo curve gain
 );
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
