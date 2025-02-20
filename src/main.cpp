@@ -15,6 +15,7 @@ rd::Selector autonSelector({
 });
 
 rd::Console console;
+rd::Image image1(&team_logo,"team logo");
 
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
@@ -76,7 +77,6 @@ void initialize() {
 	chassis.calibrate();	
 
 	autonSelector.focus();
-	rd::Image image1(&team_logo,"team logo");
 }
 
 /**
