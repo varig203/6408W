@@ -23,7 +23,7 @@ rd::Selector autonSelector({
 });
 
 rd::Console console; // Creating the terminal
-rd::Image image1(&team_logo,"team logo"); // Creating the image
+rd::Image image1(&team_logo,"Team logo"); // Creating the image
 
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
@@ -66,12 +66,6 @@ lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sens
 // At the top after includes
 ASSET(TestPath_txt);  // Declare the example.txt path file
 
-// Setup function for drivetrain
-void setup_drivetrain() {
-	left_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	right_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-}
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -79,11 +73,15 @@ void setup_drivetrain() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	// Set up drivetrain brake modes and initalize gearbox and calibrate drive sensors
-	setup_drivetrain();
+	// Set up drivetrain brake modes
+	left_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	right_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+
+	// Initalize gearbox and calibrate drive sensors
 	initialize_gearbox();
 	chassis.calibrate();	
 
+	// Focus onto auton selector
 	autonSelector.focus();
 }
 
