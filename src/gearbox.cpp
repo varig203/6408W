@@ -43,8 +43,7 @@ void initialize_gearbox() {
 
 bool detect_red() {
     double hue = Optical_Sensor.get_hue();
-    int proximity = Optical_Sensor.get_proximity();
-    
+   
     // Red hue is around 17 degrees, give it a small range (±5 degrees)
     bool is_red = (hue >= 12 && hue <= 22);
     
@@ -53,7 +52,6 @@ bool detect_red() {
 
 bool detect_blue() {
     double hue = Optical_Sensor.get_hue();
-    int proximity = Optical_Sensor.get_proximity();
     
     // Blue hue is around 217 degrees, give it a small range (±5 degrees)
     bool is_blue = (hue >= 212 && hue <= 222);
