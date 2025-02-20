@@ -178,7 +178,3 @@ void GearBox_Control() {
         BottomMotor.brake();
     }
 }
-
-    
-
-    

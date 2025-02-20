@@ -2,6 +2,7 @@
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
 #include "gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
 #include "autons.hpp"
+#include "team_logo.h"
 
 // Auton selector setup
 // Docs https://robodash.readthedocs.io/en/latest/
@@ -12,6 +13,8 @@ rd::Selector autonSelector({
 	{"Red Goals", Red_Goal_Auton},
 	{"Skills", skills},
 });
+
+rd::Console console;
 
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
@@ -67,13 +70,13 @@ void setup_drivetrain() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-
 	// Set up drivetrain brake modes
 	setup_drivetrain();
 	initialize_gearbox();
 	chassis.calibrate();	
 
 	autonSelector.focus();
+	rd::Image image1(&team_logo,"team logo");
 }
 
 /**
