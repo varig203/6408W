@@ -1,7 +1,6 @@
 #include "main.h"
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
-#include "../include/gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
-#include "lemlib/api.hpp"  // Include lemlib API for chassis and drivetrain
+#include "gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
 
 // we should revamp autos by friday
 void Blue_Side_Auton() {
@@ -90,6 +89,9 @@ void universal_auton() {
     stop_intake();
 }
 
+void skills() {} // Creating for now for auton selector
+
+// REMEMBER TO NEVER MAKE TASKS SHORT LIVED
 void test(){
     // Now we can specify a custom timeout (e.g., 3000ms = 3 seconds)
     pros::Task IntakeTask([]() { auton_intake_handler(3000); }, "Intake Task");

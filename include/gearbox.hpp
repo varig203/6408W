@@ -1,5 +1,4 @@
-#ifndef GEARBOX_HPP
-#define GEARBOX_HPP
+#pragma once
 
 // Declaration for gearbox control functions
 
@@ -11,5 +10,3 @@ void stop_intake();
 void auton_intake();
 void initialize_gearbox();
 void auton_intake_handler(int timeout_ms);
-
-#endif // GEARBOX_HPP 

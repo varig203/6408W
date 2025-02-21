@@ -1,13 +1,35 @@
 #include "main.h"
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
-#include "../include/gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
-#include "lemlib/api.hpp"  // Include lemlib API for chassis and drivetrain
+#include "gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
 #include "autons.hpp"
+#include "team_logo.h"
+
+/******************************
+ *       DANIEL'S TODO:       *
+ *       - CLEANUP CODE       *
+ *     - CLEANUP COMMENTS     *
+ * - RESTRUCTURE IF NECESSARY *
+ *      - OPTIMIZE CODE       *
+ ******************************/
+
+// Auton selector setup
+// Docs https://robodash.readthedocs.io/en/latest/
+rd::Selector autonSelector({
+	{"Blue Ring", Blue_Side_Auton},
+	{"Blue Goal", Blue_Goal_Auton},
+	{"Red Ring", Red_Side_Auton},
+	{"Red Goals", Red_Goal_Auton},
+	{"Skills", skills},
+});
+
+rd::Console console; // Creating the terminal
+rd::Image image1(&team_logo,"Team logo"); // Creating the image
+
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
 pros::MotorGroup right_motor_group({-1, 3, -4}, pros::MotorGearset::blue);
 
-lemlib::Drivetrain drivetrain( &right_motor_group, &left_motor_group,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
+lemlib::Drivetrain drivetrain(&right_motor_group, &left_motor_group,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
 //https://lemlib.readthedocs.io/en/stable/tutorials/4_pid_tuning.html
 //^ PID Tuning Guide
 lemlib::ControllerSettings lateral_controller(20, // proportional gain (kP)
@@ -44,29 +66,6 @@ lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sens
 // At the top after includes
 ASSET(TestPath_txt);  // Declare the example.txt path file
 
-// Setup function for drivetrain
-void setup_drivetrain() {
-	left_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	right_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-}
-
-
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -74,17 +73,16 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
 	// Set up drivetrain brake modes
-	setup_drivetrain();
+	left_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	right_motor_group.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
-	pros::lcd::register_btn1_cb(on_center_button);
+	// Initalize gearbox and calibrate drive sensors
 	initialize_gearbox();
 	chassis.calibrate();	
 
-	// The global chassis object will be used in opcontrol()
+	// Focus onto auton selector
+	autonSelector.focus();
 }
 
 /**
@@ -117,8 +115,8 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	// Optionally set the starting pose. In this example we keep it at the origin
-	Red_Side_Auton();
+	autonSelector.run_auton();
+	image1.focus(); // Shows picture for after auton
 }
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -151,9 +149,9 @@ void opcontrol() {
 		}
 		b_button_prev = b_button_curr;
 
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
+		// pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+		//                  (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+		//                  (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		
 		// Get throttle and turning values from the controller.
 		// Invert the throttle value because pushing forward returns a negative value.
