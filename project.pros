@@ -325,7 +325,8 @@
     "upload_options": {
       "icon": "pizza",
       "slot": 1,
-      "description": "6408W"
+      "description": "6408W",
+      "after": "run"
     },
     "use_early_access": false
   }
