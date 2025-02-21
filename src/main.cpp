@@ -148,10 +148,6 @@ void opcontrol() {
 			clamp_fn();  // Toggle the H port by calling the clamp function
 		}
 		b_button_prev = b_button_curr;
-
-		// pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		//                  (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		//                  (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		
 		// Get throttle and turning values from the controller.
 		// Invert the throttle value because pushing forward returns a negative value.

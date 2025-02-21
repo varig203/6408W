@@ -77,7 +77,6 @@ void auton_intake_handler(int timeout_ms) {
 
 }
 
-
 void intake() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -122,7 +121,7 @@ void set_arm_position() {
     double current_angle = Arm_Sensor.get_position();  // This returns centidegrees
     double error = Arm_Target - current_angle;
     
-    if (abs(error) <= acceptable_angle_range) {  // Now checking if within 1 degree
+    if (std::abs(error) <= acceptable_angle_range) {  // Now checking if within 1 degree
         if(BottomMotor.get_actual_velocity() < 5||BottomMotor.get_actual_velocity() > -5){
             intake();
             current_state = "Arm moving velo 0 ";
