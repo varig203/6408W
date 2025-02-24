@@ -1,5 +1,4 @@
 #include "main.h"
-#include <string>  // For std::string
 #include "gearbox.hpp"  // For function declarations
 #include <cmath>   // For abs() and other math functions
 
@@ -21,8 +20,6 @@ const double kI = 0.0;  // Set to 0 until we get P working
 const double kD = 0.1;  // Set to 0 until we get P working
 double integral = 0;
 double previousError = 0;
-
-std::string current_state = "Nothing";
 
 // Add at the top with other global variables
 bool WillRedGetSorted = false;
@@ -88,28 +85,24 @@ void intake() {
     bool blue_detected = detect_blue();
 
     if(WillRedGetSorted && red_detected) {
-        current_state = "RED STOP";
         pros::delay(40);
         TopMotor.brake();
         BottomMotor.move(127);
         pros::delay(250);  // Hold for half a second
     }
     else if(!WillRedGetSorted && blue_detected) {
-        current_state = "BLUE STOP";
         pros::delay(40);
         TopMotor.brake();
         BottomMotor.move(127);
         pros::delay(250);  // Hold for half a second
     }
     else {
-        current_state = "INTAKING";
         TopMotor.move(127);
         BottomMotor.move(-127);
     }
 }
 
 void raise_arm() {
-    current_state = "Arm Raising";
     TopMotor.move(-127);
     BottomMotor.move(127);
 }
@@ -124,19 +117,14 @@ void set_arm_position() {
     if (std::abs(error) <= acceptable_angle_range) {  // Now checking if within 1 degree
         if(BottomMotor.get_actual_velocity() < 5||BottomMotor.get_actual_velocity() > -5){
             intake();
-            current_state = "Arm moving velo 0 ";
         }
         else {
-            current_state = "Arm Holding";
             TopMotor.brake();
             BottomMotor.move(-127);
             integral = 0;
         }
 
         return;
-    }
-    else {
-        current_state = "Arm Moving";
     }
     
     double motorPower = error * kP;
@@ -157,19 +145,16 @@ void GearBox_Control() {
     up_button_prev = up_button_curr;
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-        current_state = "Intaking";
         intake();
     }
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         set_arm_position();
     }
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-        current_state = "Arm Raising";
         TopMotor.move(-127);
         BottomMotor.move(127);
     }
     else {
-        current_state = ".";
         TopMotor.brake();
         BottomMotor.brake();
     }
