@@ -1,3 +1,7 @@
+// Specifically for CLang to ignore main.h
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-include-directive"
+
 /**
  * \file main.h
  *
