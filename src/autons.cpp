@@ -6,22 +6,22 @@
 void Blue_Side_Auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0, 28, 0, 3000); // mogo 1 pos
+	chassis.moveToPose(0,35,0, 1000, {.maxSpeed = 90}); // go north to get angle on fisrt ring stack
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
 	auton_intake();
-	chassis.moveToPose(0,35,0, 1000); // go north to get angle on fisrt ring stack
-	chassis.turnToHeading(270, 500);
-	pros::delay(1000);
-	chassis.moveToPoint(24,32,2000, {.forwards = false}, true); // backwards to intake first ring
 	pros::delay(500);
-	chassis.moveToPoint(35,47,2000, {.forwards = false}, true); // turn towards 2 rings in feild and star arc
-	chassis.turnToHeading(90,1000);
+	chassis.moveToPoint(3,38,1000, {.forwards = false});
+	pros::delay(500);
+	chassis.moveToPoint(15,43,2000, {.forwards = false, .maxSpeed = 80});    
+	chassis.moveToPoint(35,45,2000, {.forwards = false, .maxSpeed = 80});
+	//chassis.turnToPoint(24,32,500, {.forwards = false});
 	pros::delay(1000);
-	chassis.moveToPoint(8,50.5,2000, {.forwards = false,.maxSpeed = 60}, true); // finish ark at the tower
-	pros::delay(3000); // change to stop intaking opponent top ring
+	chassis.moveToPoint(24,32,2000, {.forwards = false}, true); // backwards to intake last ring
+	pros::delay(2000); // time to finish intaking last ring
 	stop_intake();
+	chassis.moveToPoint(-15,30,2000, {.forwards = false});
 }
 
 // exact mirror of blue side (change x to -x and rotate turns by 180)
