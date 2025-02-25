@@ -6,24 +6,26 @@
 void Blue_Side_Auton() {
     chassis.setPose(0,0,0);
 	clamp_fn();
-	chassis.moveToPose(0,35,0, 1000, {.maxSpeed = 90}); // go north to get angle on fisrt ring stack
+	chassis.moveToPose(0,38,0, 1000, {.maxSpeed = 90}); // go north to get angle on fisrt ring stack
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
 	auton_intake();
 	pros::delay(500);
-	chassis.moveToPoint(3,38,1000, {.forwards = false});
+	chassis.moveToPoint(5,40,1000, {.forwards = false});
 	pros::delay(500);
-	chassis.moveToPoint(15,43,2000, {.forwards = false, .maxSpeed = 80});    
-	chassis.moveToPoint(35,45,2000, {.forwards = false, .maxSpeed = 80});
-	//chassis.turnToPoint(24,32,500, {.forwards = false});
+	chassis.moveToPoint(15,43,2000, {.forwards = false, .maxSpeed = 90});    
+	chassis.moveToPoint(35,45,2000, {.forwards = false, .maxSpeed = 90});
+	chassis.moveToPoint(25,43,1000); // avoid intaking red ring by backing up
+	chassis.moveToPoint(25,35,2000, {.forwards = false});
 	pros::delay(1000);
-	chassis.moveToPoint(24,32,2000, {.forwards = false}, true); // backwards to intake last ring
+	chassis.turnToPoint(17,25,500, {.forwards = false});
+	chassis.moveToPoint(17,30,2000, {.forwards = false}, true); // backwards to intake last ring
 	pros::delay(2000); // time to finish intaking last ring
 	stop_intake();
-	chassis.moveToPoint(-15,30,2000, {.forwards = false});
+	chassis.moveToPoint(-18,30,2000, {.forwards = false, .maxSpeed = 90});
 }
-
+ 
 // exact mirror of blue side (change x to -x and rotate turns by 180)
 void Red_Side_Auton() {
     chassis.setPose(0,0,0);

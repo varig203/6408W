@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Main",
+    "project_name": "auto test",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -326,7 +326,7 @@
       "icon": "pizza",
       "slot": 1,
       "description": "6408W",
-      "after": "run"
+      "after": "none"
     },
     "use_early_access": false
   }

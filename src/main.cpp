@@ -115,8 +115,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	autonSelector.run_auton();
-	image1.focus(); // Shows picture for after auton
+	Blue_Side_Auton(); // Shows picture for after auton
 }
 /**
  * Runs the operator control code. This function will be started in its own task
