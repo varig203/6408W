@@ -1,4 +1,5 @@
 // Specifically for CLang to ignore main.h
+#include "robodash/views/console.hpp"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-include-directive"
 
@@ -41,6 +42,8 @@
 #include "api.h"
 #include "lemlib/api.hpp"
 #include "robodash/api.h"
+
+extern rd::Console console;
 
 /**
  * You should add more #includes here

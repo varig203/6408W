@@ -31,6 +31,9 @@ void initialize_gearbox() {
     // Initialize optical sensor
     Optical_Sensor.disable_gesture();  // We don't need gesture detection
     Optical_Sensor.set_led_pwm(100);   // Set LED brightness (0-100)
+
+    console.printf("TopMotor Temp: %i", TopMotor.get_temperature());
+    console.printf("BottomMotor Temp: %i", BottomMotor.get_temperature());
     
     // Reset and check rotation sensor
     Arm_Sensor.reset();

@@ -79,7 +79,7 @@ void initialize() {
 
 	// Initalize gearbox and calibrate drive sensors
 	initialize_gearbox();
-	chassis.calibrate();	
+	chassis.calibrate();
 
 	// Focus onto auton selector
 	autonSelector.focus();
