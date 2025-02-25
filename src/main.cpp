@@ -23,7 +23,7 @@ rd::Selector autonSelector({
 });
 
 rd::Console console; // Creating the terminal
-rd::Image image1(&team_logo,"Team logo"); // Creating the image
+rd::Image image1(&team_logo,"Whopper"); // Creating the image
 
 // Global drive objects under the lemlib framework:
 pros::MotorGroup left_motor_group({5, -6, 7}, pros::MotorGearset::blue);
