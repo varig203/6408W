@@ -115,7 +115,8 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	Red_Side_Auton(); // Shows picture for after auton
+	// Red_Side_Auton(); // Shows picture for after auton
+	autonSelector.run_auton(); // REMOVE COMMENT WHEN READY AT COMP
 }
 /**
  * Runs the operator control code. This function will be started in its own task
