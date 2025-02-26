@@ -115,7 +115,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	Blue_Side_Auton(); // Shows picture for after auton
+	Red_Side_Auton(); // Shows picture for after auton
 }
 /**
  * Runs the operator control code. This function will be started in its own task
