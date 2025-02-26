@@ -33,8 +33,8 @@ void initialize_gearbox() {
     Optical_Sensor.set_led_pwm(100);   // Set LED brightness (0-100)
 
     console.println("Whopper gaming (Motor temps)\n");
-    console.printf("TopMotor Temp: %d\n", TopMotor.get_temperature());
-    console.printf("BottomMotor Temp: %d\n", BottomMotor.get_temperature());
+    console.printf("TopMotor Temp: %lf\n", TopMotor.get_temperature());
+    console.printf("BottomMotor Temp: %lf\n", BottomMotor.get_temperature());
     
     // Reset and check rotation sensor
     Arm_Sensor.reset();
