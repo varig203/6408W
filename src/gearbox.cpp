@@ -5,12 +5,6 @@
 bool detect_red();
 bool detect_blue();
 
-pros::Motor TopMotor(9);
-pros::Motor BottomMotor(18);
-pros::Rotation Arm_Sensor(8);
-pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::Optical Optical_Sensor(12);
-
 const double Arm_Target = 310*100;  // 313 degrees * 100 (centidegrees)
 const double acceptable_angle_range = 25;  // 1 degree * 100 (centidegrees)
 
@@ -140,20 +134,20 @@ void set_arm_position() {
 
 void GearBox_Control() {
     // Check for up button press (edge detection)
-    bool up_button_curr = master.get_digital(pros::E_CONTROLLER_DIGITAL_UP);
+    bool up_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP);
     if (up_button_curr && !up_button_prev) {
         WillRedGetSorted = !WillRedGetSorted;  // Toggle the state
-        master.print(0, 0, "Sorting: %s", WillRedGetSorted ? "RED" : "BLUE");  // Added controller print
+        controller.print(0, 0, "Sorting: %s", WillRedGetSorted ? "RED" : "BLUE");  // Added controller print
     }
     up_button_prev = up_button_curr;
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         intake();
     }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         set_arm_position();
     }
-    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
         TopMotor.move(-127);
         BottomMotor.move(127);
     }

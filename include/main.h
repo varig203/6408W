@@ -42,6 +42,7 @@
 #include "api.h"
 #include "lemlib/api.hpp"
 #include "robodash/api.h"
+#include "hardware.hpp"
 
 extern rd::Console console;
 
