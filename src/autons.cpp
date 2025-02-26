@@ -93,7 +93,36 @@ void universal_auton() {
     stop_intake();
 }
 
-void skills() {} // Creating for now for auton selector
+void skills() { // Creating for now for auton selector
+	chassis.setPose(0,0,180);
+	auton_intake();
+	pros::delay(500);
+	clamp_fn();
+	pros::delay(100);
+	stop_intake();
+	chassis.moveToPoint(0,13,2000, {.forwards = false});
+	chassis.turnToPoint(19,13,1000, {.maxSpeed = 80});
+	chassis.moveToPoint(19,13,2000, {.maxSpeed = 60});
+	pros::delay(1000);
+	clamp_fn();
+	pros::delay(500);
+	auton_intake();
+	chassis.moveToPoint(22,37,1000,{.forwards = false});
+	chassis.moveToPoint(60,61,3000, {.forwards = false});
+	chassis.turnToPoint(56,37,1000, {.forwards = false});
+	chassis.moveToPoint(56,37,1000, {.forwards = false});
+	chassis.moveToPoint(56,0,4000,{.forwards = false, .maxSpeed = 60});
+	chassis.moveToPoint(63,0,1000, {.forwards = false, .maxSpeed = 80});
+	chassis.moveToPoint(63,-5,1000);
+	pros::delay(1000);
+	stop_intake();
+	pros::delay(500);
+	clamp_fn();
+	pros::delay(500);
+	raise_arm();
+	// end of q1
+
+} 
 
 // REMEMBER TO NEVER MAKE TASKS SHORT LIVED
 void test(){
