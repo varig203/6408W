@@ -148,8 +148,7 @@ void GearBox_Control() {
         set_arm_position();
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-        TopMotor.move(-127);
-        BottomMotor.move(127);
+        raise_arm();
     }
     else {
         TopMotor.brake();
