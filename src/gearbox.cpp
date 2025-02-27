@@ -110,10 +110,9 @@ void set_arm_position() {
     double error = Arm_Target - current_angle;
     
     if (std::abs(error) <= acceptable_angle_range) {  // Now checking if within 1 degree
-        if(BottomMotor.get_actual_velocity() < 5||BottomMotor.get_actual_velocity() > -5){
+        if (BottomMotor.get_actual_velocity() < 5||BottomMotor.get_actual_velocity() > -5){
             intake();
-        }
-        else {
+        } else {
             TopMotor.brake();
             BottomMotor.move(-127);
             integral = 0;
