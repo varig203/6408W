@@ -17,3 +17,14 @@
 - **A**: Doinker
 - **Left Stick**: Throttle
 - **Right Stick**: Turning
+---
+## Project Structure Overview
+- **`src/`**: Contains the main robot code.
+  - **`hardware.hpp` & `hardware.cpp`**: Hardware definitions (motors, sensors, pneumatics, etc.).
+  - **`autons.hpp` & `autons.cpp`**: Autonomous code and routines.
+  - **`gearbox.hpp` & `gearbox.cpp`**: Everything to do with the gearbox mechanism for intake and wall stake mech.
+- **`include/`**: Contains the header files `hpp` or `h`
+- **`firmware/`**: DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.
+## Git Workflow
+- **Commit small, functional changes**: Avoid large "feature dumps." Each commit should do one thing and do it well.
+- **Test often**: Ensure code is tested before committing. Use the testing procedure to verify everything works.
