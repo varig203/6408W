@@ -86,14 +86,12 @@ void intake() {
         TopMotor.brake();
         BottomMotor.move(127);
         pros::delay(250);  // Hold for half a second
-    }
-    else if(!WillRedGetSorted && blue_detected) {
+    } else if(!WillRedGetSorted && blue_detected) {
         pros::delay(40);
         TopMotor.brake();
         BottomMotor.move(127);
         pros::delay(250);  // Hold for half a second
-    }
-    else {
+    } else {
         TopMotor.move(127);
         BottomMotor.move(-127);
     }
@@ -143,14 +141,11 @@ void GearBox_Control() {
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         intake();
-    }
-    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         set_arm_position();
-    }
-    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
         raise_arm();
-    }
-    else {
+    } else {
         TopMotor.brake();
         BottomMotor.brake();
     }
