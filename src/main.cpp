@@ -77,7 +77,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	skills(); // Shows picture for after auton
+	skills(); 
 	//autonSelector.run_auton(); // REMOVE COMMENT WHEN READY AT COMP
 }
 /**
