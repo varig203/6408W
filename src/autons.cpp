@@ -134,6 +134,7 @@ void skills() { // Creating for now for auton selector
 	pros::delay(1250); // change to save time
 	clamp_fn();
 	// end of q1
+	// adjust q2 to account for tracking error
 	pros::delay(500);
 	auton_intake();
 	chassis.moveToPoint(-22,25,1000,{.forwards = false});
@@ -157,6 +158,9 @@ void skills() { // Creating for now for auton selector
 	auton_intake();
 	pros::delay(750);
 	stop_intake();
+	// end of q2
+	// go for third mogo
+	
 
 } 
 
