@@ -27,4 +27,4 @@
 - **`firmware/`**: DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING.
 ## Git Workflow
 - **Commit small, functional changes**: Avoid large "feature dumps." Each commit should do one thing and do it well.
-- **Test often**: Ensure code is tested before committing. Use the testing procedure to verify everything works.
+- **Test often**: Ensure code is tested before committing.
