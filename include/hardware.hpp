@@ -2,10 +2,6 @@
 
 #include "api.h"
 #include "lemlib/api.hpp"
-#include "lemlib/chassis/chassis.hpp"
-#include "lemlib/chassis/trackingWheel.hpp"
-#include "pros/adi.hpp"
-#include "pros/rotation.hpp"
 
 // Drivetrain
 extern pros::MotorGroup left_motors;
