@@ -197,10 +197,7 @@ void skills() { // Creating for now for auton selector
 	pros::delay(750);
 	stop_intake();
 	chassis.moveToPoint(-55,107,500,{.forwards = false});
-	// push final goal (runs out of time)
-	//chassis.turnToHeading(90,500);
-	//chassis.moveToPoint(70,122,2000);
-	//chassis.moveToPoint(40,100,1000,{.forwards = false});
+	chassis.moveToPoint(70,107,7000,{.forwards = false});
 
 } 
 
