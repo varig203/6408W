@@ -77,8 +77,8 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	Large_Balls_To_Lick(); 
-	//autonSelector.run_auton(); // REMOVE COMMENT WHEN READY AT COMP
+
+	autonSelector.run_auton(); // REMOVE COMMENT WHEN READY AT COMP
 }
 /**
  * Runs the operator control code. This function will be started in its own task
