@@ -19,7 +19,7 @@ rd::Selector autonSelector({
 	{"Blue Goal", Blue_Goal_Auton},
 	{"Red Ring", Red_Side_Auton},
 	{"Red Goals", Red_Goal_Auton},
-	{"Skills", skills},
+	{"Skills", Large_Balls_To_Lick},
 });
 
 rd::Console console; // Creating the terminal
@@ -77,7 +77,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	skills(); 
+	Large_Balls_To_Lick(); 
 	//autonSelector.run_auton(); // REMOVE COMMENT WHEN READY AT COMP
 }
 /**
