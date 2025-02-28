@@ -93,7 +93,7 @@ void universal_auton() {
     stop_intake();
 }
 
-void skills() { // Creating for now for auton selector
+void Large_Balls_To_Lick() { // Creating for now for auton selector
 	chassis.setPose(0,0,180);
 	auton_intake();
 	pros::delay(500);
@@ -167,7 +167,7 @@ void skills() { // Creating for now for auton selector
 	chassis.moveToPoint(-47,61,2000,{.forwards = false});
 	auton_intake();
 	chassis.moveToPoint(-46,78,1000,{.forwards = false});
-	pros::delay(1750);
+	pros::delay(1600);
 	stop_intake();
 	chassis.moveToPoint(-40,93,1000,{.forwards = false});
 	chassis.turnToPoint(0,107,1000);
@@ -196,9 +196,9 @@ void skills() { // Creating for now for auton selector
 	auton_intake();
 	pros::delay(750);
 	stop_intake();
-	chassis.moveToPoint(-55,107,500,{.forwards = false});
-	chassis.moveToPoint(70,107,7000,{.forwards = false});
-
+	chassis.moveToPoint(-55,121,500,{.forwards = false});
+	chassis.moveToPoint(70,121,7000,{.forwards = false});
+	chassis.moveToPoint(30,100,1000);
 } 
 
 // REMEMBER TO NEVER MAKE TASKS SHORT LIVED
