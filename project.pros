@@ -326,7 +326,7 @@
       "icon": "pizza",
       "slot": 2,
       "description": "6408W",
-      "after": "run"
+      "after": "none"
     },
     "use_early_access": false
   }

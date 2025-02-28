@@ -122,17 +122,17 @@ void skills() { // Creating for now for auton selector
 	chassis.turnToPoint(22,25,500,{.forwards = false});
 	pros::delay(500);
 	stop_intake();
-	pros::delay(250);
+	pros::delay(50);
 	clamp_fn();
-	pros::delay(250);
+	pros::delay(50);
 	raise_arm();
-	pros::delay(500);
+	pros::delay(250);
 	auton_intake();
-	pros::delay(750);
+	pros::delay(500);
 	stop_intake();
 	chassis.moveToPoint(19,13,3000);
-	chassis.turnToPoint(-19,13,500,{.maxSpeed = 90});
-	chassis.moveToPoint(-19,13,2000,{.maxSpeed = 50});
+	chassis.turnToPoint(-19,10,500,{.maxSpeed = 90});
+	chassis.moveToPoint(-19,10,2000,{.maxSpeed = 50});
 	pros::delay(1250); // change to save time
 	clamp_fn();
 	// end of q1
@@ -140,7 +140,7 @@ void skills() { // Creating for now for auton selector
 	pros::delay(500);
 	auton_intake();
 	chassis.moveToPoint(-15,25,1000,{.forwards = false, .maxSpeed = 90});
-	chassis.moveToPoint(-48,61,3000, {.forwards = false, .maxSpeed = 90});
+	chassis.moveToPoint(-53,61,3000, {.forwards = false, .maxSpeed = 90});
 	pros::delay(500);
 	chassis.turnToPoint(-45,37,1000, {.forwards = false});
 	chassis.moveToPoint(-45,37,1000, {.forwards = false});
@@ -148,12 +148,46 @@ void skills() { // Creating for now for auton selector
 	chassis.moveToPoint(-45,10,1000);
 	chassis.turnToPoint(-53,13,500,{.forwards = false, .maxSpeed = 90});
 	pros::delay(500);
-	chassis.moveToPoint(-53,13,1000, {.forwards = false, .maxSpeed = 80});
+	chassis.moveToPoint(-55,14,1000, {.forwards = false, .maxSpeed = 80});
 	pros::delay(500);
 	chassis.moveToPoint(-67,-3,1000);
 	chassis.turnToPoint(-22,25,500,{.forwards = false});
 	pros::delay(500);
 	stop_intake();
+	pros::delay(50);
+	clamp_fn();
+	pros::delay(50);
+	raise_arm();
+	pros::delay(250);
+	auton_intake();
+	pros::delay(500); 
+	stop_intake();
+	// end of q2
+	// go for third mogo
+	chassis.moveToPoint(-47,61,2000,{.forwards = false});
+	auton_intake();
+	chassis.moveToPoint(-46,78,1000,{.forwards = false});
+	pros::delay(1750);
+	stop_intake();
+	chassis.moveToPoint(-40,93,1000,{.forwards = false});
+	chassis.turnToPoint(0,107,1000);
+	chassis.moveToPoint(0,107,2000,{.maxSpeed = 80});
+	pros::delay(1250);
+	clamp_fn();
+	pros::delay(500);
+	auton_intake();
+	chassis.moveToPoint(-19,78,2000,{.forwards = false});
+	chassis.moveToPoint(-38,78,1000,{.forwards = false});
+	chassis.turnToPoint(-43,122,1000,{.forwards = false});
+	chassis.moveToPoint(-43,122,2000,{.forwards = false, .maxSpeed = 70});
+	chassis.moveToPoint(-40,90,1000);
+	chassis.turnToPoint(-55,107,1000,{.forwards = false, .maxSpeed = 90});
+	chassis.moveToPoint(-55,107,1000,{.forwards = false, .maxSpeed = 80});
+	pros::delay(2000);
+	stop_intake();
+	chassis.moveToPoint(-45,90,1000);
+	chassis.turnToPoint(-63,135,1000);
+	chassis.moveToPoint(-63,135,1000);
 	pros::delay(250);
 	clamp_fn();
 	pros::delay(250);
@@ -162,9 +196,11 @@ void skills() { // Creating for now for auton selector
 	auton_intake();
 	pros::delay(750);
 	stop_intake();
-	// end of q2
-	// go for third mogo
-	
+	chassis.moveToPoint(-55,107,500,{.forwards = false});
+	// push final goal (runs out of time)
+	//chassis.turnToHeading(90,500);
+	//chassis.moveToPoint(70,122,2000);
+	//chassis.moveToPoint(40,100,1000,{.forwards = false});
 
 } 
 
