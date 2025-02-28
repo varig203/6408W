@@ -107,13 +107,15 @@ void skills() { // Creating for now for auton selector
 	clamp_fn();
 	pros::delay(500);
 	auton_intake();
-	chassis.moveToPoint(22,25,1000,{.forwards = false});
+	chassis.moveToPoint(22,25,1000,{.forwards = false, .maxSpeed = 90});
 	chassis.moveToPoint(60,61,3000, {.forwards = false, .maxSpeed = 90});
+	pros::delay(500);
 	chassis.turnToPoint(56,37,1000, {.forwards = false});
 	chassis.moveToPoint(56,37,1000, {.forwards = false});
 	chassis.moveToPoint(56,0,4000,{.forwards = false, .maxSpeed = 50});
 	chassis.moveToPoint(50,10,1000);
 	chassis.turnToPoint(63,13,500,{.forwards = false, .maxSpeed = 90});
+	pros::delay(500);
 	chassis.moveToPoint(63,13,1000, {.forwards = false, .maxSpeed = 80});
 	pros::delay(500);
 	chassis.moveToPoint(69,-3,1000);
@@ -129,24 +131,26 @@ void skills() { // Creating for now for auton selector
 	pros::delay(750);
 	stop_intake();
 	chassis.moveToPoint(19,13,3000);
-	chassis.turnToPoint(-21,13,500,{.maxSpeed = 90});
-	chassis.moveToPoint(-21,13,2000,{.maxSpeed = 50});
+	chassis.turnToPoint(-19,13,500,{.maxSpeed = 90});
+	chassis.moveToPoint(-19,13,2000,{.maxSpeed = 50});
 	pros::delay(1250); // change to save time
 	clamp_fn();
 	// end of q1
 	// adjust q2 to account for tracking error
 	pros::delay(500);
 	auton_intake();
-	chassis.moveToPoint(-22,25,1000,{.forwards = false});
-	chassis.moveToPoint(-55,61,3000, {.forwards = false, .maxSpeed = 90});
-	chassis.turnToPoint(-50,37,1000, {.forwards = false});
-	chassis.moveToPoint(-50,37,1000, {.forwards = false});
-	chassis.moveToPoint(-50,0,4000,{.forwards = false, .maxSpeed = 50});
-	chassis.moveToPoint(-45,10,1000);
-	chassis.turnToPoint(-58,13,500,{.forwards = false, .maxSpeed = 90});
-	chassis.moveToPoint(-58,13,1000, {.forwards = false, .maxSpeed = 80});
+	chassis.moveToPoint(-15,25,1000,{.forwards = false, .maxSpeed = 90});
+	chassis.moveToPoint(-48,61,3000, {.forwards = false, .maxSpeed = 90});
 	pros::delay(500);
-	chassis.moveToPoint(-62,-3,1000);
+	chassis.turnToPoint(-45,37,1000, {.forwards = false});
+	chassis.moveToPoint(-45,37,1000, {.forwards = false});
+	chassis.moveToPoint(-45,0,4000,{.forwards = false, .maxSpeed = 50});
+	chassis.moveToPoint(-45,10,1000);
+	chassis.turnToPoint(-53,13,500,{.forwards = false, .maxSpeed = 90});
+	pros::delay(500);
+	chassis.moveToPoint(-53,13,1000, {.forwards = false, .maxSpeed = 80});
+	pros::delay(500);
+	chassis.moveToPoint(-67,-3,1000);
 	chassis.turnToPoint(-22,25,500,{.forwards = false});
 	pros::delay(500);
 	stop_intake();
