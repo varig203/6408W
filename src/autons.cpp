@@ -100,9 +100,9 @@ void skills() { // Creating for now for auton selector
 	clamp_fn();
 	pros::delay(100);
 	stop_intake();
-	chassis.moveToPoint(0,13,2000, {.forwards = false});
-	chassis.turnToPoint(19,13,1000, {.maxSpeed = 80});
-	chassis.moveToPoint(19,13,2000, {.maxSpeed = 60});
+	chassis.moveToPoint(0,12,2000, {.forwards = false});
+	chassis.turnToPoint(19,12,1000, {.maxSpeed = 80});
+	chassis.moveToPoint(19,12,2000, {.maxSpeed = 60});
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(500);
