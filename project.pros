@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Main",
+    "project_name": "Test",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -323,8 +323,8 @@
       }
     },
     "upload_options": {
-      "icon": "pizza",
-      "slot": 3,
+      "icon": "planet",
+      "slot": 4,
       "description": "6408W",
       "after": "none"
     },

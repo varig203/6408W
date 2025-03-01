@@ -2,6 +2,7 @@
 #include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
 #include "gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
 #include "autons.hpp"
+#include "pros/rtos.hpp"
 #include "team_logo.h"
 
 /******************************
@@ -26,8 +27,48 @@ rd::Console console; // Creating the terminal
 rd::Image image1(&team_logo,"Whopper"); // Creating the image
 
 // At the top after includes
-ASSET(TestPath_txt);  // Declare the example.txt path file
+//ASSET(TestPath_txt);  // Declare the example.txt path file // UNUSED
 
+// Creating tasks
+void chassis_fn() { 
+	while (true) {
+		// Get throttle and turning values from the controller.
+		// Invert the throttle value because pushing forward returns a negative value.
+		int throttle = -controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+		// Use the raw right stick value for turning.
+		int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+		// Use the global chassis object's arcade drive function.
+		chassis.arcade(throttle, turn, false, 0.75);
+		pros::delay(20);
+	}
+}
+
+void pneumatics_fn() {
+	bool a_button_prev = false;
+    bool b_button_prev = false;
+	while (true) {
+		bool a_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+		if (a_button_curr && !a_button_prev) {
+			doinker();  // Toggle the G port by calling the doinker function
+		}
+		a_button_prev = a_button_curr;
+
+		// Check if the B button was just pressed (edge detection)
+		bool b_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+		if (b_button_curr && !b_button_prev) {
+			clamp_fn();  // Toggle the H port by calling the clamp function
+		}
+		b_button_prev = b_button_curr;
+		pros::delay(20);
+	}
+}
+void gearbox_fn() {
+	while (true) {
+		GearBox_Control();
+
+		pros::delay(25);
+	}
+}
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -94,33 +135,8 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller controller(pros::E_CONTROLLER_MASTER);
-	bool a_button_prev = false;
-    bool b_button_prev = false;
-	while (true) {
-		bool a_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
-		if (a_button_curr && !a_button_prev) {
-			doinker();  // Toggle the G port by calling the doinker function
-		}
-		a_button_prev = a_button_curr;
-
-		// Check if the B button was just pressed (edge detection)
-		bool b_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
-		if (b_button_curr && !b_button_prev) {
-			clamp_fn();  // Toggle the H port by calling the clamp function
-		}
-		b_button_prev = b_button_curr;
-		
-		// Get throttle and turning values from the controller.
-		// Invert the throttle value because pushing forward returns a negative value.
-		int throttle = -controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-		// Use the raw right stick value for turning.
-		int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-
-		// Use the global chassis object's arcade drive function.
-		chassis.arcade(throttle, turn, false, 0.75);
-		GearBox_Control();
-
-		pros::delay(25);
-	}
+	// Calls all the threads to start
+	pros::Task chassis_task(chassis_fn);
+	pros::Task pneumatics_task(pneumatics_fn);
+	pros::Task gearbox_task(gearbox_fn);
 }
