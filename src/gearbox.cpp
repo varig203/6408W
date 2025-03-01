@@ -6,7 +6,7 @@ bool detect_red();
 bool detect_blue();
 
 const double Arm_Target = 310*100;  // 313 degrees * 100 (centidegrees)
-const double acceptable_angle_range = 25;  // 1 degree * 100 (centidegrees)
+const double acceptable_angle_range = 150;  // 1 degree * 100 (centidegrees)
 
 const double kP = 0.05;  // Reduced from 5.0 to be less aggressive
 const double kI = 0.0;  // Set to 0 until we get P working
@@ -108,8 +108,9 @@ void set_arm_position() {
     int32_t raw_position = Arm_Sensor.get_position();
     double current_angle = Arm_Sensor.get_position();  // This returns centidegrees
     double error = Arm_Target - current_angle;
+
     
-    if (std::abs(error) <= acceptable_angle_range) {  // Now checking if within 1 degree
+    if ((std::abs(error) <= acceptable_angle_range) || raw_position < 20)   {  // Now checking if within 1 degree
         if (BottomMotor.get_actual_velocity() < 5||BottomMotor.get_actual_velocity() > -5){
             intake();
         } else {
@@ -140,12 +141,16 @@ void GearBox_Control() {
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         intake();
+        
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         set_arm_position();
+       
     } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
         raise_arm();
+        
     } else {
         TopMotor.brake();
         BottomMotor.brake();
+        
     }
 }

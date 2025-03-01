@@ -164,26 +164,26 @@ void Large_Balls_To_Lick() { // Creating for now for auton selector
 	stop_intake();
 	// end of q2
 	// go for third mogo
-	chassis.moveToPoint(-47,61,2000,{.forwards = false});
+	chassis.moveToPoint(-47,61,2000,{.forwards = false, .maxSpeed = 90});
 	auton_intake();
-	chassis.moveToPoint(-46,78,1000,{.forwards = false});
+	chassis.moveToPoint(-48,78,1000,{.forwards = false});
 	pros::delay(1600);
 	stop_intake();
 	chassis.moveToPoint(-40,93,1000,{.forwards = false});
-	chassis.turnToPoint(0,107,1000);
-	chassis.moveToPoint(0,107,2000,{.maxSpeed = 80});
+	chassis.turnToPoint(-3,107,1000);
+	chassis.moveToPoint(-3,107,2000,{.maxSpeed = 65});
 	pros::delay(1250);
 	clamp_fn();
 	pros::delay(500);
 	auton_intake();
 	chassis.moveToPoint(-19,78,2000,{.forwards = false});
 	chassis.moveToPoint(-38,78,1000,{.forwards = false});
-	chassis.turnToPoint(-43,122,1000,{.forwards = false});
-	chassis.moveToPoint(-43,122,2000,{.forwards = false, .maxSpeed = 70});
+	chassis.turnToPoint(-44.5,122,1000,{.forwards = false});
+	chassis.moveToPoint(-44.5,122,2000,{.forwards = false, .maxSpeed = 70});
 	chassis.moveToPoint(-40,90,1000);
 	chassis.turnToPoint(-55,107,1000,{.forwards = false, .maxSpeed = 90});
 	chassis.moveToPoint(-55,107,1000,{.forwards = false, .maxSpeed = 80});
-	pros::delay(2000);
+	pros::delay(2500);
 	stop_intake();
 	chassis.moveToPoint(-45,90,1000);
 	chassis.turnToPoint(-63,135,1000);
@@ -197,7 +197,8 @@ void Large_Balls_To_Lick() { // Creating for now for auton selector
 	pros::delay(750);
 	stop_intake();
 	chassis.moveToPoint(-55,121,500,{.forwards = false});
-	chassis.moveToPoint(70,121,7000,{.forwards = false});
+	chassis.moveToPoint(0,121,4000,{.forwards = false});
+	chassis.moveToPoint(70,121,3000,{.forwards = false});
 	chassis.moveToPoint(30,100,1000);
 } 
 
