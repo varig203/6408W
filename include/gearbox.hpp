@@ -4,9 +4,9 @@
 
 // Runs the gearbox control loop that handles the intake, PID arm load, and outtake functions.
 void GearBox_Control();
-void intake();
-void raise_arm();
-void stop_intake();
-void auton_intake();
-void initialize_gearbox();
-void auton_intake_handler(int timeout_ms);
+void intake_fn();
+void raiseArm_fn();
+void stopIntake_fn();
+void autonIntake_fn();
+void initializeGearbox_fn();
+void autonIntakeHandler_fn(int timeout_ms);

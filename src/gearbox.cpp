@@ -2,11 +2,11 @@
 #include "gearbox.hpp"  // For function declarations
 
 // Add these function declarations at the top with other declarations
-bool detect_red();
-bool detect_blue();
+bool isRedDetected();
+bool isBlueDetected();
 
-const double Arm_Target = 310*100;  // 313 degrees * 100 (centidegrees)
-const double acceptable_angle_range = 150;  // 1 degree * 100 (centidegrees)
+const double ARM_TARGET = 310*100;  // 313 degrees * 100 (centidegrees)
+const double ACCEPTABLE_ANGLE_RANGE = 150;  // 1 degree * 100 (centidegrees)
 
 const double kP = 0.05;  // Reduced from 5.0 to be less aggressive
 const double kI = 0.0;  // Set to 0 until we get P working
@@ -15,78 +15,78 @@ double integral = 0;
 double previousError = 0;
 
 // Add at the top with other global variables
-bool WillRedGetSorted = false;
-bool up_button_prev = false;
+bool isRedSorted = false;
+bool upButtonPrev = false;
 
 void initialize_gearbox() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     
     // Initialize optical sensor
-    Optical_Sensor.disable_gesture();  // We don't need gesture detection
-    Optical_Sensor.set_led_pwm(100);
+    OpticalSensor.disable_gesture();  // We don't need gesture detection
+    OpticalSensor.set_led_pwm(100);
 
     console.println("Whopper gaming (Motor temps)\n");
     console.printf("TopMotor Temp: %lf\n", TopMotor.get_temperature());
     console.printf("BottomMotor Temp: %lf\n", BottomMotor.get_temperature());
     
     // Reset and check rotation sensor
-    Arm_Sensor.reset();
+    ArmSensor.reset();
     pros::delay(100);
 }
 
-bool detect_red() {
-    double hue = Optical_Sensor.get_hue();
+bool isRedDetected() {
+    double hue = OpticalSensor.get_hue();
    
     // Red hue is around 17 degrees, give it a small range (±5 degrees)
-    bool is_red = (hue >= 12 && hue <= 22);
+    bool isRed = (hue >= 12 && hue <= 22);
     
-    return is_red;
+    return isRed;
 }
 
-bool detect_blue() {
-    double hue = Optical_Sensor.get_hue();
+bool isBlueDetected() {
+    double hue = OpticalSensor.get_hue();
     
     // Blue hue is around 217 degrees, give it a small range (±5 degrees)
-    bool is_blue = (hue >= 212 && hue <= 222);
+    bool isBlue = (hue >= 212 && hue <= 222);
     
-    return is_blue;
+    return isBlue;
 }
-void stop_intake() {
+void stopIntake_fn() {
     TopMotor.brake();
     BottomMotor.brake();
 }
 
-void auton_intake() {
+void autonIntake_fn() {
     TopMotor.move(127);
     BottomMotor.move(-127);
 }
-void auton_intake_handler(int timeout_ms) {
-    uint32_t timer_start = pros::millis();
-    while ((pros::millis() - timer_start) < timeout_ms) {
-        intake();
+void autonIntakeHandler_fn(int timeout_ms) {
+    uint32_t timerStart = pros::millis();
+    while ((pros::millis() - timerStart) < timeout_ms) {
+        intake_fn();
         pros::delay(20);
     }
-    stop_intake();
+    stopIntake_fn();
 
 }
 
-void intake() {
+void intake_fn() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     
 
     // Get current sensor readings for debug
-    double hue = Optical_Sensor.get_hue();
-    bool red_detected = detect_red();
-    bool blue_detected = detect_blue();
+    double hue = OpticalSensor.get_hue();
+    bool redDetected = isRedDetected();
+    bool blueDetected = isBlueDetected();
 
-    if(WillRedGetSorted && red_detected) {
+    if(isRedSorted && redDetected) {
         pros::delay(40);
         TopMotor.brake();
         BottomMotor.move(127);
         pros::delay(250);  // Hold for half a second
-    } else if(!WillRedGetSorted && blue_detected) {
+    } else if(!isRedSorted && blueDetected) {
         pros::delay(40);
         TopMotor.brake();
         BottomMotor.move(127);
@@ -102,17 +102,16 @@ void raise_arm() {
     BottomMotor.move(127);
 }
 
-void set_arm_position() {
+void setArmPosition_fn() {
     
     // Get sensor values
-    int32_t raw_position = Arm_Sensor.get_position();
-    double current_angle = Arm_Sensor.get_position();  // This returns centidegrees
-    double error = Arm_Target - current_angle;
-
+    int32_t raw_position = ArmSensor.get_position();
+    double currentAngle = ArmSensor.get_position();  // This returns centidegrees
+    double error = ARM_TARGET - currentAngle;
     
-    if ((std::abs(error) <= acceptable_angle_range) || raw_position < 20)   {  // Now checking if within 1 degree
+    if ((std::abs(error) <= ACCEPTABLE_ANGLE_RANGE) || raw_position < 20)   {  // Now checking if within 1 degree
         if (BottomMotor.get_actual_velocity() < 5||BottomMotor.get_actual_velocity() > -5){
-            intake();
+            intake_fn();
         } else {
             TopMotor.brake();
             BottomMotor.move(-127);
@@ -132,21 +131,21 @@ void set_arm_position() {
 
 void GearBox_Control() {
     // Check for up button press (edge detection)
-    bool up_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP);
-    if (up_button_curr && !up_button_prev) {
-        WillRedGetSorted = !WillRedGetSorted;  // Toggle the state
-        controller.print(0, 0, "Sorting: %s", WillRedGetSorted ? "RED" : "BLUE");  // Added controller print
+    bool upButtonCurr = Controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP);
+    if (upButtonCurr && !upButtonPrev) {
+        isRedSorted = !isRedSorted;  // Toggle the state
+        Controller.print(0, 0, "Sorting: %s", isRedSorted ? "RED" : "BLUE");  // Added controller print
     }
-    up_button_prev = up_button_curr;
+    upButtonPrev = upButtonCurr;
 
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-        intake();
-        
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-        set_arm_position();
+    if (Controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        intake_fn();
+
+    } else if (Controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        setArmPosition_fn();
        
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-        raise_arm();
+    } else if (Controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        raiseArm_fn();
         
     } else {
         TopMotor.brake();

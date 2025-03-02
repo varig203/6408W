@@ -30,8 +30,8 @@ rd::Image image1(&team_logo,"Whopper"); // Creating the image
 void chassis_fn() { 
 	while (true) {
 		// Get throttle and turning values from the controller.
-		int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-		int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+		int throttle = Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+		int turn = Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
 		chassis.arcade(-throttle, turn, false, 0.75);
 		pros::delay(20);
@@ -43,13 +43,13 @@ void pneumatics_fn() {
     bool b_button_prev = false;
 	
 	while (true) {
-		bool a_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+		bool a_button_curr = Controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
 		if (a_button_curr && !a_button_prev) {
-			doinker();  // Toggle the G port by calling the doinker function
+			doinker_fn();  // Toggle the G port by calling the doinker function
 		}
 		a_button_prev = a_button_curr;
 
-		bool b_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+		bool b_button_curr = Controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
 		if (b_button_curr && !b_button_prev) {
 			clamp_fn();  // Toggle the H port by calling the clamp function
 		}
@@ -67,11 +67,11 @@ void pneumatics_fn() {
  */
 void initialize() {
 	// Set up drivetrain brake modes
-	left_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-	right_motors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	LeftMotors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+	RightMotors.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
 	// Initalize gearbox and calibrate drive sensors
-	initialize_gearbox();
+	initializeGearbox_fn();
 	chassis.calibrate();
 
 	// Focus onto auton selector

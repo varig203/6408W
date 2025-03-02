@@ -10,7 +10,7 @@ void Blue_Side_Auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	auton_intake();
+	autonIntake_fn();
 	pros::delay(500);
 	chassis.moveToPoint(5,40,1000, {.forwards = false});
 	pros::delay(500);
@@ -22,7 +22,7 @@ void Blue_Side_Auton() {
 	chassis.turnToPoint(17,30,500, {.forwards = false});
 	chassis.moveToPoint(17,35,2000, {.forwards = false}, true); // backwards to intake last ring
 	pros::delay(2000); // time to finish intaking last ring
-	stop_intake();
+	stopIntake_fn();
 	chassis.moveToPoint(-18,30,2000, {.forwards = false, .maxSpeed = 80});
 }
  
@@ -34,7 +34,7 @@ void Red_Side_Auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	auton_intake();
+	autonIntake_fn();
 	pros::delay(500);
 	chassis.moveToPoint(-5,40,1000, {.forwards = false});
 	pros::delay(500);
@@ -46,7 +46,7 @@ void Red_Side_Auton() {
 	chassis.turnToPoint(-17,30,500, {.forwards = false});
 	chassis.moveToPoint(-17,35,2000, {.forwards = false}, true); // backwards to intake last ring
 	pros::delay(2000); // time to finish intaking last ring
-	stop_intake();
+	stopIntake_fn();
 	chassis.moveToPoint(18,30,2000, {.forwards = false, .maxSpeed = 80});
 }
 
@@ -58,12 +58,12 @@ void Blue_Goal_Auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	auton_intake();
+	autonIntake_fn();
 	chassis.turnToHeading(90, 500);
 	pros::delay(1000);
 	chassis.moveToPoint(-24, 32, 2000, {.forwards = false}, true);
 	pros::delay(2000);
-	stop_intake();
+	stopIntake_fn();
     chassis.moveToPoint(14, 40, 2000, {.forwards = false}, true);
 }
 void Red_Goal_Auton() {
@@ -73,12 +73,12 @@ void Red_Goal_Auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	auton_intake();
+	autonIntake_fn();
 	chassis.turnToHeading(270, 500);
 	pros::delay(1000);
 	chassis.moveToPoint(24, 32, 2000, {.forwards = false}, true);
 	pros::delay(2000);
-	stop_intake();
+	stopIntake_fn();
     chassis.moveToPoint(-14, 40, 2000, {.forwards = false}, true);
 }
 void universal_auton() {
@@ -88,25 +88,25 @@ void universal_auton() {
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(250);
-	auton_intake();
+	autonIntake_fn();
     pros::delay(2000);
-    stop_intake();
+    stopIntake_fn();
 }
 
 void Large_Balls_To_Lick() { // Creating for now for auton selector
 	chassis.setPose(0,0,180);
-	auton_intake();
+	autonIntake_fn();
 	pros::delay(500);
 	clamp_fn();
 	pros::delay(100);
-	stop_intake();
+	stopIntake_fn();
 	chassis.moveToPoint(0,12,2000, {.forwards = false});
 	chassis.turnToPoint(19,12,1000, {.maxSpeed = 80});
 	chassis.moveToPoint(19,12,2000, {.maxSpeed = 60});
 	pros::delay(1000);
 	clamp_fn();
 	pros::delay(500);
-	auton_intake();
+	autonIntake_fn();
 	chassis.moveToPoint(22,25,1000,{.forwards = false, .maxSpeed = 90});
 	chassis.moveToPoint(60,61,3000, {.forwards = false, .maxSpeed = 90});
 	pros::delay(500);
@@ -121,15 +121,15 @@ void Large_Balls_To_Lick() { // Creating for now for auton selector
 	chassis.moveToPoint(69,-3,1000);
 	chassis.turnToPoint(22,25,500,{.forwards = false});
 	pros::delay(500);
-	stop_intake();
+	stopIntake_fn();
 	pros::delay(50);
 	clamp_fn();
 	pros::delay(50);
-	raise_arm();
+	raiseArm_fn();
 	pros::delay(250);
-	auton_intake();
+	autonIntake_fn();
 	pros::delay(500);
-	stop_intake();
+	stopIntake_fn();
 	chassis.moveToPoint(19,13,3000);
 	chassis.turnToPoint(-19,10,500,{.maxSpeed = 90});
 	chassis.moveToPoint(-19,10,2000,{.maxSpeed = 50});
@@ -138,7 +138,7 @@ void Large_Balls_To_Lick() { // Creating for now for auton selector
 	// end of q1
 	// adjust q2 to account for tracking error
 	pros::delay(500);
-	auton_intake();
+	autonIntake_fn();
 	chassis.moveToPoint(-15,25,1000,{.forwards = false, .maxSpeed = 90});
 	chassis.moveToPoint(-53,61,3000, {.forwards = false, .maxSpeed = 90});
 	pros::delay(500);
@@ -153,29 +153,29 @@ void Large_Balls_To_Lick() { // Creating for now for auton selector
 	chassis.moveToPoint(-67,-3,1000);
 	chassis.turnToPoint(-22,25,500,{.forwards = false});
 	pros::delay(500);
-	stop_intake();
+	stopIntake_fn();
 	pros::delay(50);
 	clamp_fn();
 	pros::delay(50);
-	raise_arm();
+	raiseArm_fn();
 	pros::delay(250);
-	auton_intake();
+	autonIntake_fn();
 	pros::delay(500); 
-	stop_intake();
+	stopIntake_fn();
 	// end of q2
 	// go for third mogo
 	chassis.moveToPoint(-47,61,2000,{.forwards = false, .maxSpeed = 90});
-	auton_intake();
+	autonIntake_fn();
 	chassis.moveToPoint(-48,78,1000,{.forwards = false});
 	pros::delay(1600);
-	stop_intake();
+	stopIntake_fn();
 	chassis.moveToPoint(-40,93,1000,{.forwards = false});
 	chassis.turnToPoint(-3,107,1000);
 	chassis.moveToPoint(-3,107,2000,{.maxSpeed = 65});
 	pros::delay(1250);
 	clamp_fn();
 	pros::delay(500);
-	auton_intake();
+	autonIntake_fn();
 	chassis.moveToPoint(-19,78,2000,{.forwards = false});
 	chassis.moveToPoint(-38,78,1000,{.forwards = false});
 	chassis.turnToPoint(-44.5,122,1000,{.forwards = false});
@@ -184,18 +184,18 @@ void Large_Balls_To_Lick() { // Creating for now for auton selector
 	chassis.turnToPoint(-55,107,1000,{.forwards = false, .maxSpeed = 90});
 	chassis.moveToPoint(-55,107,1000,{.forwards = false, .maxSpeed = 80});
 	pros::delay(2500);
-	stop_intake();
+	stopIntake_fn();
 	chassis.moveToPoint(-45,90,1000);
 	chassis.turnToPoint(-63,135,1000);
 	chassis.moveToPoint(-63,135,1000);
 	pros::delay(250);
 	clamp_fn();
 	pros::delay(250);
-	raise_arm();
+	raiseArm_fn();
 	pros::delay(500);
-	auton_intake();
+	autonIntake_fn();
 	pros::delay(750);
-	stop_intake();
+	stopIntake_fn();
 	chassis.moveToPoint(-55,121,500,{.forwards = false});
 	chassis.moveToPoint(0,121,4000,{.forwards = false});
 	chassis.moveToPoint(70,121,3000,{.forwards = false});
@@ -205,6 +205,6 @@ void Large_Balls_To_Lick() { // Creating for now for auton selector
 // REMEMBER TO NEVER MAKE TASKS SHORT LIVED
 void test(){
     // Now we can specify a custom timeout (e.g., 3000ms = 3 seconds)
-    pros::Task IntakeTask([]() { auton_intake_handler(3000); }, "Intake Task");
+    pros::Task IntakeTask([]() { autonIntakeHandler_fn(3000); }, "Intake Task");
     chassis.moveToPose(0,10,0,500);
 }

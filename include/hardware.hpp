@@ -4,29 +4,29 @@
 #include "lemlib/api.hpp"
 
 // Drivetrain
-extern pros::MotorGroup left_motors;
-extern pros::MotorGroup right_motors;
-extern lemlib::Drivetrain drivetrain;
-extern lemlib::ExpoDriveCurve throttle_curve;
-extern lemlib::Chassis chassis;
+extern pros::MotorGroup LeftMotors;
+extern pros::MotorGroup RightMotors;
+extern lemlib::Drivetrain Drivetrain;
+extern lemlib::ExpoDriveCurve ThrottleCurve;
+extern lemlib::Chassis Chassis;
 
 // Pneumatics
-extern pros::adi::DigitalOut clamp_port;
-extern pros::adi::DigitalOut doinker_port;
+extern pros::adi::DigitalOut ClampPort;
+extern pros::adi::DigitalOut DoinkerPort;
 
 // Gearbox
 extern pros::Motor TopMotor;
 extern pros::Motor BottomMotor;
-extern pros::Rotation Arm_Sensor;
-extern pros::Controller controller;
+extern pros::Rotation ArmSensor;
+extern pros::Controller Controller;
 
 // Sensors
-extern pros::Optical Optical_Sensor;
-extern pros::Imu imu;
+extern pros::Optical OpticalSensor;
+extern pros::Imu Imu;
 extern pros::Rotation VerticalTracking;
-extern lemlib::TrackingWheel vertical_tracking_wheel;
-extern lemlib::OdomSensors sensors;
+extern lemlib::TrackingWheel VerticaTrackingWheel;
+extern lemlib::OdomSensors Sensors;
 
 // PID 
-extern lemlib::ControllerSettings lateral_controller;
-extern lemlib::ControllerSettings angular_controller;
+extern lemlib::ControllerSettings LateralController;
+extern lemlib::ControllerSettings AngularController;

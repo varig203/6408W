@@ -9,11 +9,11 @@
 void clamp_fn(void) {
     static bool clamp_state = false;
     clamp_state = !clamp_state;
-    clamp_port.set_value(clamp_state);
+    ClampPort.set_value(clamp_state);
 }
 
-void doinker(void) {
+void doinker_fn(void) {
     static bool doinker_state = false;
     doinker_state = !doinker_state;
-    doinker_port.set_value(doinker_state);
+    DoinkerPort.set_value(doinker_state);
 }
