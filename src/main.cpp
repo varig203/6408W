@@ -62,13 +62,6 @@ void pneumatics_fn() {
 		pros::delay(20);
 	}
 }
-void gearbox_fn() {
-	while (true) {
-		GearBox_Control();
-
-		pros::delay(25);
-	}
-}
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -138,5 +131,10 @@ void opcontrol() {
 	// Calls all the threads to start
 	pros::Task chassis_task(chassis_fn);
 	pros::Task pneumatics_task(pneumatics_fn);
-	pros::Task gearbox_task(gearbox_fn);
+	// Put here as it wasn't working
+	while (true) {
+		GearBox_Control();
+
+		pros::delay(25);
+	}
 }
