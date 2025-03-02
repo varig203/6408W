@@ -16,7 +16,7 @@ double previousError = 0;
 
 // Add at the top with other global variables
 bool WillRedGetSorted = false;
-bool up_button_prev = false;  // To track previous button state
+bool up_button_prev = false;
 
 void initialize_gearbox() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -24,7 +24,7 @@ void initialize_gearbox() {
     
     // Initialize optical sensor
     Optical_Sensor.disable_gesture();  // We don't need gesture detection
-    Optical_Sensor.set_led_pwm(100);   // Set LED brightness (0-100)
+    Optical_Sensor.set_led_pwm(100);
 
     console.println("Whopper gaming (Motor temps)\n");
     console.printf("TopMotor Temp: %lf\n", TopMotor.get_temperature());

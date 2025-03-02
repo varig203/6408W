@@ -1,4 +1,4 @@
 #pragma once
 
-extern void clamp_fn(void);
-extern void doinker(void);  // Declaration for toggling port G
+extern void clamp_fn();
+extern void doinker();  // Declaration for toggling port G

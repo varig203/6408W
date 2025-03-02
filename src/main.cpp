@@ -26,19 +26,14 @@ rd::Selector autonSelector({
 rd::Console console; // Creating the terminal
 rd::Image image1(&team_logo,"Whopper"); // Creating the image
 
-// At the top after includes
-//ASSET(TestPath_txt);  // Declare the example.txt path file // UNUSED
-
 // Creating tasks
 void chassis_fn() { 
 	while (true) {
 		// Get throttle and turning values from the controller.
-		// Invert the throttle value because pushing forward returns a negative value.
-		int throttle = -controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-		// Use the raw right stick value for turning.
+		int throttle = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-		// Use the global chassis object's arcade drive function.
-		chassis.arcade(throttle, turn, false, 0.75);
+
+		chassis.arcade(-throttle, turn, false, 0.75);
 		pros::delay(20);
 	}
 }
@@ -46,6 +41,7 @@ void chassis_fn() {
 void pneumatics_fn() {
 	bool a_button_prev = false;
     bool b_button_prev = false;
+	
 	while (true) {
 		bool a_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
 		if (a_button_curr && !a_button_prev) {
@@ -53,15 +49,16 @@ void pneumatics_fn() {
 		}
 		a_button_prev = a_button_curr;
 
-		// Check if the B button was just pressed (edge detection)
 		bool b_button_curr = controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
 		if (b_button_curr && !b_button_prev) {
 			clamp_fn();  // Toggle the H port by calling the clamp function
 		}
 		b_button_prev = b_button_curr;
+
 		pros::delay(20);
 	}
 }
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *

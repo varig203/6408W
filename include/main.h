@@ -39,9 +39,13 @@
  */
 #define PROS_USE_LITERALS
 
-#include "api.h"
-#include "lemlib/api.hpp"
+#include "api.h" // PROS Libs
+
+// Libraries
+#include "lemlib/api.hpp" 
 #include "robodash/api.h"
+
+// Hardware declarations
 #include "hardware.hpp"
 
 extern rd::Console console;

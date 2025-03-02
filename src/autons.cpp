@@ -1,6 +1,6 @@
 #include "main.h"
-#include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
-#include "gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
+#include "pnuematic.hpp"
+#include "gearbox.hpp"
 
 // we should revamp autos by friday
 void Blue_Side_Auton() {
