@@ -23,8 +23,8 @@ rd::Selector autonSelector({
 	{"Skills", Large_Balls_To_Lick},
 });
 
-rd::Console console; // Creating the terminal
-rd::Image image1(&team_logo,"Whopper"); // Creating the image
+rd::Console Console; // Creating the terminal
+rd::Image Image1(&team_logo,"Whopper"); // Creating the image
 
 // Creating tasks
 void chassis_fn() { 
@@ -33,27 +33,28 @@ void chassis_fn() {
 		int throttle = Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-		chassis.arcade(-throttle, turn, false, 0.75);
+		//Chassis.curvature(-throttle, turn, false); // UNCOMMENT TO TEST CHEESY DRIVE
+		Chassis.arcade(-throttle, turn, false, 0.75);
 		pros::delay(20);
 	}
 }
 
 void pneumatics_fn() {
-	bool a_button_prev = false;
-    bool b_button_prev = false;
+	bool doinkerPrev = false;
+    bool clampPrev = false;
 	
 	while (true) {
-		bool a_button_curr = Controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
-		if (a_button_curr && !a_button_prev) {
+		bool doinkerCurr = Controller.get_digital(pros::E_CONTROLLER_DIGITAL_A);
+		if (doinkerCurr && !doinkerPrev) {
 			doinker_fn();  // Toggle the G port by calling the doinker function
 		}
-		a_button_prev = a_button_curr;
+		doinkerPrev = doinkerCurr;
 
-		bool b_button_curr = Controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
-		if (b_button_curr && !b_button_prev) {
+		bool clampCurr = Controller.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+		if (clampCurr && !clampPrev) {
 			clamp_fn();  // Toggle the H port by calling the clamp function
 		}
-		b_button_prev = b_button_curr;
+		clampPrev = clampCurr;
 
 		pros::delay(20);
 	}
@@ -72,7 +73,7 @@ void initialize() {
 
 	// Initalize gearbox and calibrate drive sensors
 	initializeGearbox_fn();
-	chassis.calibrate();
+	Chassis.calibrate();
 
 	// Focus onto auton selector
 	autonSelector.focus();

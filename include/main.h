@@ -48,7 +48,7 @@
 // Hardware declarations
 #include "hardware.hpp"
 
-extern rd::Console console;
+extern rd::Console Console;
 
 /**
  * You should add more #includes here

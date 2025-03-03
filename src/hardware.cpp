@@ -1,3 +1,4 @@
+#include "lemlib/chassis/chassis.hpp"
 #include "main.h"
 
 // ---- Controller ----
@@ -19,9 +20,9 @@ pros::adi::DigitalOut DoinkerPort('G');
 
 // ---- Sensors ----
 pros::Rotation VerticalTracking(-16);
-pros::Imu imu(19);
+pros::Imu Imu(19);
 lemlib::TrackingWheel VerticalTrackingWheel(&VerticalTracking, lemlib::Omniwheel::NEW_2, 1);
-lemlib::OdomSensors sensors(&VerticalTrackingWheel, nullptr, nullptr, nullptr, &imu);
+lemlib::OdomSensors sensors(&VerticalTrackingWheel, nullptr, nullptr, nullptr, &Imu);
 
 // ---- Drivetrain PID ----
 // https://lemlib.readthedocs.io/en/stable/tutorials/4_pid_tuning.html
@@ -49,9 +50,13 @@ lemlib::ControllerSettings AngularController(1.65, // proportional gain (kP)
 );
 
 // ---- Defining drive ----
-lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
-                                     10, // minimum output where drivetrain will move out of 127
-                                     2 // expo curve gain
+lemlib::ExpoDriveCurve ThrottleCurve(3, // joystick deadband out of 127
+                                    10, // minimum output where drivetrain will move out of 127
+                                        2 // expo curve gain
+);
+lemlib::ExpoDriveCurve SteerCurve(3,
+                                 10,
+                                     2
 );
 lemlib::Drivetrain drivetrain(&RightMotors, &LeftMotors,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
-lemlib::Chassis chassis(drivetrain, LateralController, AngularController, sensors);
+lemlib::Chassis chassis(drivetrain, LateralController, AngularController, sensors, &ThrottleCurve);

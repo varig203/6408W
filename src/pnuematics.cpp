@@ -7,13 +7,13 @@
  *****************************************************/
 
 void clamp_fn(void) {
-    static bool clamp_state = false;
-    clamp_state = !clamp_state;
-    ClampPort.set_value(clamp_state);
+    static bool clampState = false;
+    clampState = !clampState;
+    ClampPort.set_value(clampState);
 }
 
 void doinker_fn(void) {
-    static bool doinker_state = false;
-    doinker_state = !doinker_state;
-    DoinkerPort.set_value(doinker_state);
+    static bool doinkerState = false;
+    doinkerState = !doinkerState;
+    DoinkerPort.set_value(doinkerState);
 }

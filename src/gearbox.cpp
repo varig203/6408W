@@ -26,9 +26,9 @@ void initialize_gearbox() {
     OpticalSensor.disable_gesture();  // We don't need gesture detection
     OpticalSensor.set_led_pwm(100);
 
-    console.println("Whopper gaming (Motor temps)\n");
-    console.printf("TopMotor Temp: %lf\n", TopMotor.get_temperature());
-    console.printf("BottomMotor Temp: %lf\n", BottomMotor.get_temperature());
+    Console.println("Whopper gaming (Motor temps)\n");
+    Console.printf("TopMotor Temp: %lf\n", TopMotor.get_temperature());
+    Console.printf("BottomMotor Temp: %lf\n", BottomMotor.get_temperature());
     
     // Reset and check rotation sensor
     ArmSensor.reset();
