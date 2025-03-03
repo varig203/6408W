@@ -324,7 +324,7 @@
     },
     "upload_options": {
       "icon": "planet",
-      "slot": 4,
+      "slot": 1,
       "description": "6408W",
       "after": "none"
     },

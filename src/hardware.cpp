@@ -2,7 +2,7 @@
 #include "main.h"
 
 // ---- Controller ----
-pros::Controller controller(pros::E_CONTROLLER_MASTER);
+pros::Controller Controller(pros::E_CONTROLLER_MASTER);
 
 // ---- Drive Motors ----
 pros::MotorGroup LeftMotors({5, -6, 7}, pros::MotorGearset::blue);
@@ -59,4 +59,4 @@ lemlib::ExpoDriveCurve SteerCurve(3,
                                      2
 );
 lemlib::Drivetrain drivetrain(&RightMotors, &LeftMotors,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
-lemlib::Chassis chassis(drivetrain, LateralController, AngularController, sensors, &ThrottleCurve);
+lemlib::Chassis Chassis(drivetrain, LateralController, AngularController, sensors, &ThrottleCurve, &SteerCurve);

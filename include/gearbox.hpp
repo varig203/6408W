@@ -1,7 +1,5 @@
 #pragma once
 
-// Declaration for gearbox control functions
-
 // Runs the gearbox control loop that handles the intake, PID arm load, and outtake functions.
 void GearBox_Control();
 void intake_fn();

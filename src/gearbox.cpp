@@ -18,7 +18,7 @@ double previousError = 0;
 bool isRedSorted = false;
 bool upButtonPrev = false;
 
-void initialize_gearbox() {
+void initializeGearbox_fn() {
     TopMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     BottomMotor.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     
@@ -97,7 +97,7 @@ void intake_fn() {
     }
 }
 
-void raise_arm() {
+void raiseArm_fn() {
     TopMotor.move(-127);
     BottomMotor.move(127);
 }

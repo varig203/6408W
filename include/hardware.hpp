@@ -3,6 +3,8 @@
 #include "api.h"
 #include "lemlib/api.hpp"
 
+extern pros::Controller Controller;
+
 // Drivetrain
 extern pros::MotorGroup LeftMotors;
 extern pros::MotorGroup RightMotors;

@@ -1,6 +1,6 @@
 #include "main.h"
-#include "pnuematic.hpp"  // Include the declaration for clamp_fn and doinker
-#include "gearbox.hpp"    // Include the declaration for Controll_Gears    // Include the declaration for intake
+#include "pnuematic.hpp" 
+#include "gearbox.hpp" 
 #include "autons.hpp"
 #include "pros/rtos.hpp"
 #include "team_logo.h"
@@ -33,8 +33,8 @@ void chassis_fn() {
 		int throttle = Controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = Controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-		//Chassis.curvature(-throttle, turn, false); // UNCOMMENT TO TEST CHEESY DRIVE
-		Chassis.arcade(-throttle, turn, false, 0.75);
+		Chassis.curvature(-throttle, turn, false); // UNCOMMENT TO TEST CHEESY DRIVE
+		//Chassis.arcade(-throttle, turn, false, 0.75);
 		pros::delay(20);
 	}
 }
