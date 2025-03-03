@@ -41,5 +41,5 @@ All variables must do ``camelCase`` to denote that they are vars and not anythin
 3. Constants (ALL_CAPS)
 Constants must be in ``ALL_CAPS`` to show they are constants and never to change. They can have underscores for multiple words.
 4. Functions (camelCase``_fn`` suffix)
-Functions must use ``camelCase`` with an ``_fn`` suffix to clearly denote they are functions.
+Functions must use ``camelCase`` with an ``_fn`` suffix to clearly denote they are functions. Except the base functions `initalize`,`competition_initalize`,`disabled`, `autonomous`, and `opcontrol`.
 
