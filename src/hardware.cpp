@@ -51,12 +51,12 @@ lemlib::ControllerSettings AngularController(1.65, // proportional gain (kP)
 
 // ---- Defining drive ----
 lemlib::ExpoDriveCurve ThrottleCurve(3, // joystick deadband out of 127
-                                    10, // minimum output where drivetrain will move out of 127
-                                        2 // expo curve gain
+                                    5, // minimum output where drivetrain will move out of 127
+                                        1.019 // expo curve gain
 );
 lemlib::ExpoDriveCurve SteerCurve(3,
-                                 10,
-                                     2
+                                 5,
+                                     1.019
 );
 lemlib::Drivetrain drivetrain(&RightMotors, &LeftMotors,11.5, lemlib::Omniwheel::NEW_325, 450, 2);
-lemlib::Chassis Chassis(drivetrain, LateralController, AngularController, sensors, &ThrottleCurve, &SteerCurve);
+lemlib::Chassis Chassis(drivetrain, LateralController, AngularController, sensors);
