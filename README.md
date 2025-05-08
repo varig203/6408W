@@ -1,4 +1,6 @@
 # VEX V5RC 6408W | High Stakes 2024-2025
+> 📁 This is an **archived mirror** of the original 6408W VEX V5RC codebase for the 2024–2025 season.
+> Maintained here for preservation and reference. Original repository was team-hosted and may be removed
 ## Libraries/Framework
 ### Versions of all included software
 - **PROS**: 4.1.1
